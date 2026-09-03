@@ -20,11 +20,11 @@ def get_user(username,password,action):
         sql = cur.mogrify(f"select * from users where username = %s",(username,))
         cur.execute(sql)
         rows = cur.fetchall()
-        print("ROW COUNT FROM CURSOR",cur.rowcount)
+        
         cur.close()
         conn.close()
 
-        print("HOW MANY ROWS RETURNED FROM THE LOGIN CHECK:", len(rows))
+        print("HOW MANY ROWS RETURNED FROM THE LOGIN CHECK:", len(rows),rows[0].get("username"))
         if len(rows) == 1 and rows[0].get("password") == password:
             return True,"User found goto dashboard."
         elif len(rows) == 1 and rows[0].get("password") != password:
@@ -41,7 +41,7 @@ def get_user(username,password,action):
         bok = False
         returnmsg = ""
 
-        if rows.count == 1:
+        if len(rows) == 1:
             cur.close()
             conn.close()
             bok = False

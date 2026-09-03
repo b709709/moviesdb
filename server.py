@@ -12,6 +12,12 @@ app.secret_key = os.environ.get("SECRET_KEY","3fas35sjklaf359a0f0dsfds0f0")
 def index():
     return render_template("index.html")
 
+@app.route("/logout")
+def logout():
+    print("logging out")
+    session.clear()
+    return redirect("/?loggedout=1")
+
 @app.route("/login",methods=["POST"])
 def login():
     username = request.form.get("username")
