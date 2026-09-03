@@ -8,6 +8,18 @@ import os
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY","3fas35sjklaf359a0f0dsfds0f0")
 
+@app.before_request
+def require_login():
+    print("Client Request endpoint",request.endpoint)
+    if request.endpoint and request.endpoint.startswith("static"):
+        return
+    
+    allowed_routes = ["index","login", "static"]
+    if "loggedin" not in session:
+        if request.endpoint not in allowed_routes:
+            return redirect(url_for("index"))
+
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -17,6 +29,19 @@ def logout():
     print("logging out")
     session.clear()
     return redirect("/?loggedout=1")
+
+@app.route("/actors")
+def actors():
+    return render_template("actors.html")
+
+@app.route("/movies")
+def movies():
+    return render_template("movies.html")
+
+@app.route("/studios")
+def studios():
+    return render_template("studios.html")
+
 
 @app.route("/login",methods=["POST"])
 def login():
