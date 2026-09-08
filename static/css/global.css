@@ -21,25 +21,25 @@ background:#d0d0d0;
   padding-left:8px;
 }
 
-.game-row-header {
+.game-row-header, .actor-row-header, .data-row-header {
     display: flex;
     font-weight: bold;
     border-bottom: 2px solid #ccc;
     
 }
 
-.game-row-header div {
+.game-row-header div, .actor-row-header div, .data-row-header div {
   padding-bottom:8px;
 }
 
-.game-row-header div {
+.game-row-header div, .actor-row-header div, .data-row-header div {
     text-align: center;
     flex: 1;
     border-right: 1px solid #444;
     
 }
 
-.game-list {
+.game-list, .actor-list, .data-list {
   max-height: 80%;      /* controls scroll height */
   overflow-y: auto;       /* enables vertical scrolling */
   border: 1px solid #181717;
@@ -50,38 +50,42 @@ background:#d0d0d0;
   
 }
 
-.game-row {
+.game-row, .actor-row, .data-row {
   display: flex;          /* makes columns sit side-by-side */
   border-bottom: 1px solid #313131;
 }
-.game-row div {
+.game-row div, .actor-row div, .data-row div {
   padding:8px 0;
 }
 
-.game-row:nth-child(2n){
+.game-row:nth-child(2n), .actor-row:nth-child(2n), .data-row:nth-child(2n) {
   background: lightgray;
 }
-.game-row div {
+.game-row div, .actor-row div, .data-row div {
   flex:1;
   border-right: 1px solid #444;
 }
 
 .game-row div:last-child,
-.game-row-header div:last-child {
+.game-row-header div:last-child, 
+.actor-row div:last-child,
+.actor-row-header div:last-child,
+.data-row div:last-child,
+.data-row-header div:last-child {
     border-right: none;
 }
 
 
-.game-row:last-child {
+.game-row:last-child, .actor-row:last-child, .data-row:last-child {
   border-bottom: none;
 }
 
-.game-name {
+.game-name, .actor-name {
   font-weight: bold;
   
 }
 
-.game-console {
+.game-console, .actor-year {
   color: #555;
 }
 

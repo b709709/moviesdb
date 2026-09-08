@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        <script src="{{url_for('static',filename='js/jquery.js')}}"></script>    
         <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{url_for('static',filename='css/global.css')}}">
     </head>
@@ -25,14 +26,331 @@
          </div>
         </div>
 
-        <!-- TEST DATABLOCK -->
+        <div class="actor-list">
+            <div class="actor-row-header">
+                <div><a>Actor Name</a></div>
+                <div><a>Birth Year</a></div>
+                <div><span titla="Add New Actor" class="add-icon" data-bs-toggle="modal" data-bs-target="#addModal">➕</span></div>
+            </div>
+        
+            {% for datarow in data %}
+            <div class="actor-row" id="actor-{{datarow.id}}">
+                <div class="actor-name">{{datarow.name}}</div>
+                <div class="actor-year">{{datarow.birthyear}}</div>
+                <div class="actions">
+                    <span title="Edit Current Record" class="edit-icon btnEdit" data-bs-toggle="modal" data-bs-target="#editModal"
+                            data-actorid = "{{datarow.id}}"
+                            data-actorname = "{{datarow.name}}"
+                            data-birthyear = "{{datarow.birthyear}}"
+                            onclick="openEditModal(this)"
+                            >✏️</span>
+                        <span data-actorid = "{{datarow.id}}" id="btnDelete" title="Delete Current Record" class="delete-icon btnDelete">
+                            🗑️
+                        </span>
+                </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div id="alertPlaceholder"></div>
+        <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+
+
+        <div id="editModal" class="modal fade" tab-index="-1">
+           <div class="modal-dialog">
+            <div class="modal-content">
+                <!--HEADER-->    
+                <div class="modal-header">
+                   <h3>Edit Actor</h3>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Actor Name</label>
+                        <input type="text" class="form-control" id="edit-name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Birth Year</label>
+                        <input type="number" class="form-control" id="edit-year">
+                    </div>
+                </div>
+                <!--BODY-->
+                <div class="modal-footer">
+                    <button type="btn-save" class="btn btn-primary" id="save-edit">Save</button>
+                    <button type="btn-close" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+                <!--FOOTER-->
+            </div> <!--modal-content-->
+           </div> <!--modal-dialog-->
+        </div> <!-- editModal container-->
+
+        <div id="addModal" class="modal fade" tab-index="-1">
+         <div class="modal-dialog">
+          <div class="modal-content">  
+
+           <div class="modal-header">
+                <h5 class="modal-title">Add Actor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+           </div>
+
+           <div class="modal-body">
+               <div class="mb-3">
+                <label class="form-label">Actor Name</label>
+                <input type="text" class="form-control" id="new-name">
+               </div>
+               <div class="mb-3">
+                <label class="form-label">Birth Year</label>
+                <input type="number" class="form-control" id="new-birthyear">
+               </div>
+            </div>
+
+            <div class="modal-footer">
+             <button type="submit" class="btn btn-primary" id="save-actor">Save</button>
+             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+           </div> <!--modal footer-->
+
+          </div> <!--modal content-->
+         </div> <!--modal dialog-->
+        </div> <!--addModal container-->
+
+        <!-- TEST DATABLOCK 
+        <button class="btn btn-primary" id="btntestapi">Test API</button>
         <ul>
         {% for datarow in data %}
             <li>{{ datarow.name }} - {{ datarow.birthyear }}</li>
         {% endfor %}
         </ul> 
+        -->
+
+    <script>
+        function openEditModal(ele){
+            const actorid = ele.dataset.actorid;
+            const birthyear = ele.dataset.birthyear;
+            const actorname = ele.dataset.actorname;
+
+            document.getElementById("edit-name").value = actorname;
+            document.getElementById("edit-year").value = birthyear;
+            document.getElementById("save-edit").dataset.actorid = actorid;
+
+        }
+        document.getElementById("save-edit").onclick = async function() {
+            const modalEl = document.getElementById("editModal");
+            const modal = bootstrap.Modal.getInstance(modalEl)
+
+            const actorid = document.getElementById("save-edit").dataset.actorid;
+            const actorname = document.getElementById("edit-name").value;
+            const actoryear = document.getElementById("edit-year").value;
+
+            const response = await fetch("/api/edit?svc=api.actor&func=editActor",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({actorname,actoryear,actorid})
+                
+            });
+
+            if (response.ok) {
+                sactorrow = "actor-" + actorid;
+                gridrow = document.getElementById(sactorrow);
+                gridrow.querySelector(".actor-name").textContent = actorname;
+                gridrow.querySelector(".actor-year").textContent = actoryear;
+                editicon = gridrow.querySelector(".edit-icon");
+                editicon.dataset.actorname = actorname;
+                editicon.dataset.actoryear = actoryear;
+                modal.hide();
+
+            }
+            else {
+                alert("Save Failed, Please retry.");
+            }
 
 
+
+        }
+
+        function showToast(message, type = "success") {
+            // Bootstrap color mapping
+            const typeClass = {
+                success: "text-bg-success",
+                danger: "text-bg-danger",
+                warning: "text-bg-warning",
+                info: "text-bg-info"
+            }[type] || "text-bg-primary";
+
+            // Create wrapper
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = `
+                <div class="toast align-items-center ${typeClass} border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                    </div>
+                </div>
+            `;
+
+            // Add to container
+            const container = document.getElementById("toastContainer");
+            container.append(wrapper);
+
+            // Activate toast
+            const toastElement = wrapper.querySelector(".toast");
+            const toast = new bootstrap.Toast(toastElement, { delay: 3000 });
+            toast.show();
+
+            // Remove from DOM after hidden
+            toastElement.addEventListener("hidden.bs.toast", () => {
+                wrapper.remove();
+            });
+}
+
+    </script>
+    <script>
+        const addModal = document.getElementById('addModal');
+        addModal.addEventListener('shown.bs.modal', () => {
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-birthyear').value = 0;
+        });
+        addModal.addEventListener('shown.bs.modal', () => {
+            document.getElementById('new-name').focus();
+        });
+
+        document.getElementById("save-actor").onclick = async function(){
+             const snewname = document.getElementById("new-name").value;
+             const ibirthyear = document.getElementById("new-birthyear").value;
+
+             //alert(snewname + ibirthyear.toString());
+
+             const response = await fetch("/api/actor?svc=api.actor&func=addActor",
+                {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({"name":snewname,
+                        "birthyear":ibirthyear
+                    })
+                }
+
+             );
+             const responsedata = await response.json();
+
+             isok = responsedata["status"];
+             smsg = responsedata["msg"];
+             if (response.ok) {
+                if (isok) { showAlert(smsg,"success"); }
+                //update the screen with the new record as well return data has a row
+                console.log(responsedata);
+                console.log("Actor Name" + responsedata["data"]["name"]);
+             }
+             else {
+                showAlert(smsg,"danger");
+             }
+                addActorToGrid(responsedata);
+                const modalEl = document.getElementById('addModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                
+                modal.hide();
+
+             //need to close the modal dialog box and reset the values
+        }
+        function addActorToGrid(actordata){
+            console.log(actordata);
+            console.log(actordata.name);
+            const row = document.createElement("div");
+            row.className = "actor-row";
+            row.id = actordata["data"]["id"];
+
+            row.innerHTML = `
+                <div class="actor-name">${actordata["data"]["name"]}</div>
+                <div class="actor-year">${actordata["data"]["birthyear"]}</div>
+                <div class="actions">
+                   <span class="edit-icon"
+                      onclick="">✏️</span>
+                   <span class="delete-icon"
+                      onclick="">🗑️</span>
+                </div>
+            `;
+            document.querySelector(".actor-list").appendChild(row);
+        }
+
+        $(document).on("click",".btnDelete", async function() {
+             const elementid = "actor-" + this.dataset.actorid;
+             const myrow = document.getElementById(elementid)
+             
+             const response = await fetch("/api/actor?svc=api.actor&func=deleteActor",
+                {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body: JSON.stringify({actorid:this.dataset.actorid})
+                });
+                 
+                
+            const responsedata = await response.json();
+            if (response.ok) {
+                
+                myrow.remove();
+                if (responsedata.status == true) { sstatus = "success";  }
+                else { sstatus = "danger"; }
+                showAlert(responsedata.msg,sstatus);
+            }
+            else {
+                sstatus = "danger";
+                showAlert(reponsedata.msg,sstatus);
+            }
+            }); //onclick for dynamic buttons
+        
+        /*
+        document.getElementById("btnDelete").onclick = async function(){
+             const elementid = "actor-" + this.dataset.actorid;
+             const myrow = document.getElementById(elementid)
+             
+             const response = await fetch("/api/actor?svc=api.actor&func=deleteActor",
+                {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body: JSON.stringify({actorid:this.dataset.actorid})
+                });
+                 
+                
+            const responsedata = await response.json();
+            if (response.ok) {
+                
+                myrow.remove();
+                if (responsedata.status == true) { sstatus = "success";  }
+                else { sstatus = "danger"; }
+                showAlert(responsedata.msg,sstatus);
+            }
+            else {
+                sstatus = "danger";
+                showAlert(reponsedata.msg,sstatus);
+            }
+        }
+        */
+        function deleteRow(irowid,ele) {
+             const elementid = "actor-" + irowid.toString();
+             const myrow = document.getElementById(elementid);
+             myrow.remove();
+
+        }
+        /*
+        document.getElementById("btntestapi").onclick = async function(){
+            const response = await fetch("/api/testapi?svc=api.apitest&func=api_test",
+                {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body : JSON.stringify({var1:"GOOFY",var2:"DONALD",var3:"MICKEY"})
+                }
+            );
+            const actordata = await response.json();
+
+            if (response.ok) {
+               alert(actordata.msg);
+            }
+        }
+        */
+    </script>
+
+    
     <script src="{{url_for('static',filename='js/bootstrap.bundle.min.js')}}"></script>    
+    <script src="{{url_for('static',filename='js/global.js')}}"></script>    
     </body>
 </html>

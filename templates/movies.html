@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        <script src="{{url_for('static',filename='js/jquery.js')}}"></script>    
         <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{url_for('static',filename='css/global.css')}}">
     </head>
@@ -16,13 +17,196 @@
            <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/dashboard">Home</a>
            <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/actors?svc=services.dbproc&func=get_actors">Actors</a>
            <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/studios?svc=services.dbproc&func=get_studios">Studios</a>
-           <!--
-           <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/dashboard">Home</a>
-           <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/actors">Actors</a>
-           <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/studios">Studios</a>
-           -->
+           
          </div>
         </div>
+
+        <div class="data-list">
+            <div class="data-row-header">
+                <div><a title="Sort By Game" href="/dashboard?sort=name">Title</a></div>
+                <div><a title="Sort By Console" href="/dashboard?sort=console">Year</a></div>
+                <div class="actions-header">
+                    <span title="Add New Movie" class="add-icon" data-bs-toggle="modal" data-bs-target="#addModal">➕</span>
+                </div>
+            </div>
+
+            
+            {% for movie in data %}
+               <div class="data-row" id="movie-{{movie.id}}">
+                   <div>{{movie.title}}</div>
+                   <div>{{movie.year}}</div>
+                   <div class="actions">
+                       <span data-movieid="{{movie.id}}" 
+                             data-movietitle ="{{movie.title}}"
+                             data-movieyear = "{{movie.year}}"
+                             onclick="openEditModal(this)"
+                             class="btn-edit edit-icon" data-bs-toggle="modal" data-bs-target="#editModal">✏️</span>
+                       <span data-movieid="{{movie.id}}" 
+                             class="delete-icon btn-delete">🗑️</span>
+            
+                   </div>
+               </div>
+            {% endfor %}
+
+        </div><!--movie-list-->
+
+    
+    <div id="addModal" class="modal fade" tab-index="-1">
+       <div class="modal-dialog">
+        <div class="modal-content">
+           <div class="modal-header">
+               <h3>Add Movie</h3>
+               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+           </div>
+           <div class="modal-body">
+               <div class="mb-3">
+                  <label class="form-label">Title</label>
+                  <input type="text" class="form-control" id="new-title" name="new-title">
+               </div>
+               <div class="mb-3">
+                  <label class="form-label">Year</label>
+                  <input type="number" class="form-control" id="new-year" name="new-year">
+               </div>
+           </div>
+           <div class="modal-footer">
+               <button type="button" class="btn btn-primary" id="saveNew">Save</button>
+               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+           </div>
+        </div><!--modal-content-->
+       </div><!--modal-dialog-->
+    </div> <!--addModal-->
+
+    <div id="editModal" class="modal fade" tab-index="-1">
+       <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+               <h3>Edit Movie</h3>
+               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+              <div class="mb-3">
+                  <label class="form-label">Title</label>
+                  <input class="form-control" type="text" id="edit-title" name="edit-title">
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Year</label>
+                <input class="form-control" type="number" id="edit-year" name="edit-year">
+              </div>
+          </div><!--modal body-->
+          <div class="modal-footer">
+            <button type="submit" class="btn btn-primary" id="saveEdit">Save</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div><!--modal-footer-->
+        </div><!--modal-content-->
+       </div><!--modal-dialog-->
+    </div><!--editModal-->
+    
+    <!-- delete functions begin -->
+    <script>
+        
+        $(document).on("click",".btn-delete",async function() {
+            const movieid = this.dataset.movieid;    
+            console.log(movieid);
+            const response = await fetch("api/movie?svc=api.movie&func=deleteMovie",
+            {
+                method:"POST",
+                headers:{"Content-type":"application/json"},
+                body:JSON.stringify({"movieid":movieid})
+            });
+            const responsedata = await response.json();
+            console.log(responsedata);
+            removeRow(movieid);
+        })
+
+        function removeRow(movieid){
+            ele = document.getElementById("movie-" + movieid);
+            ele.remove();
+        }
+        
+    </script> 
+    <!-- end delete functions -->
+
+    <!-- edit functions begin -->
+    <script>
+        const editModal = document.getElementById("editModal");
+
+        editModal.addEventListener('shown.bs.modal', () => {
+                document.getElementById('edit-title').value = '';
+                document.getElementById('edit-year').value = 0;
+             });
+        editModal.addEventListener('shown.bs.modal', () => {
+                document.getElementById('edit-title').focus();
+             });
+
+        function openEditModal(ele){
+            
+            const stitle = ele.dataset.movietitle;
+            const iyear = ele.dataset.movieyear;
+            const imovieid = ele.dataset.movieid;
+            console.log(stitle, iyear, imovieid);
+            //set the field values from the ele
+            
+        }
+    </script>
+    <!-- add functions begin -->
+    <script>
+             <!-- event watchers for add modal -->
+             const addModal = document.getElementById('addModal');
+             addModal.addEventListener('shown.bs.modal', () => {
+                document.getElementById('new-title').value = '';
+                document.getElementById('new-year').value = 0;
+             });
+             addModal.addEventListener('shown.bs.modal', () => {
+                document.getElementById('new-title').focus();
+                
+             });
+
+             document.getElementById("saveNew").onclick = async function() {
+                  const stitle = document.getElementById("new-title").value
+                  const iyear = document.getElementById("new-year").value
+
+                  const response = await fetch("/api/movie?svc=api.movie&func=addMovie", {
+                    method:"POST",
+                    headers:{"Content-type":"application/json"},
+                    body:JSON.stringify({"title":stitle,"year":iyear })
+                  });
+                  
+                  const movie = await response.json();
+                  if (response.ok){
+                     console.log(movie);
+                     addMovieToGrid(movie);                    
+                  }
+                  else {
+                    console.log("problem with the return response");
+                    console.log(response);
+                  }
+                  
+
+                  const modalEl = document.getElementById("addModal");
+                  const modal = bootstrap.Modal.getInstance(modalEl);
+                  modal.hide();
+             }
+             function addMovieToGrid(movie){
+                console.log(movie);
+                console.log(movie["newrow"]["title"])
+                const row = document.createElement("div");
+                row.className = "data-row";
+                row.id = "movie-" + movie["newrow"]["id"];
+                row.innerHTML = `
+                       <div class="movie-title">${movie["newrow"]["title"]}</div>
+                        <div class="movie-year">${movie["newrow"]["year"]}</div>
+                        <div class="actions">
+                        <span  data-movieid=${movie["newrow"]["id"]} class="edit-icon btn-edit">✏️</span>
+                        <span  data-movieid=${movie["newrow"]["id"]} class="delete-icon btn-delete">🗑️</span>
+                        </div>
+                `;
+                //querySelector selects a single element, first element from the DOM careful!
+                document.querySelector(".data-list").appendChild(row);
+             }
+
+              
+ 
+    </script> <!-- add functions end -->
 
     <script src="{{url_for('static',filename='js/bootstrap.bundle.min.js')}}"></script>    
     </body>

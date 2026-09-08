@@ -14,10 +14,29 @@ def get_movies(session,request):
     print("in the dbproc.py get_movies method",session["username"],request.args)
     rows = []
     json = jsonify("")
+    isok = True
+    smsg = ""
+
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    sql = cur.mogrify(f"SELECT * from movie ORDER BY title")
+
+    try:
+        cur.execute(sql)
+        rows = cur.fetchall()
+        isok = True
+        smsg = "Records retrieved for movie"
+    except:
+        conn.rollback()
+        isok = False
+        smsg = "Error occured during retrieval of movie list."
+    finally:
+        cur.close()
+        conn.close()
 
     return {
-        "status":True,
-        "msg":"did get_movies in dbproc.py",
+        "status":isok,
+        "msg":smsg,
         "template":"movies.html",
         "data":rows,
         "JSON":json

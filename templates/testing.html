@@ -1,0 +1,189 @@
+<html>
+    <head>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
+        <link rel="stylesheet" href="{{url_for('static',filename='css/global.css')}}"> 
+        
+    </head>
+    <body>
+         <h1>TESTING</h1>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#testModal">Open</button>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#box2Modal">Open Box 2</button>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#box3Modal">Open Box 3</button>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#formModal">Open Box Form</button>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#form2Modal">Open Box Form 2</button>
+         <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#finalModal">Open Final</button>
+         <!-- modal boxes in bootstrap always require these components -->
+         <!-- 1. a surrounding div with an id and the class modal and fade with a tab-index of -1
+              2. a second div inside with the class modal-dialog bs uses this for scrolling 
+              3. a 3rd div inside the modal-dialog div that is for the content, i.e. a form or visuals.
+              4. a 4th div called modal-header this should have a button with a btn-close and have the
+                data attribute data-bs-dismiss="modal", this says this is a dismiss button to in bootstrap
+                and it will go up the DOM until it finds a modal class and it will close it.
+              5. then inside the modal-content is a div called modal-body this will contain all the actual content
+                 physically that you want to dispaly. 
+              6. finally at the bottom you will have a modal-footer optional, that contains other elements like save, cancel,
+                 close or save and add another kind of button sets.
+              7. there is NO additional javascript required to initiate or close the dialog box.  -->
+
+         <div id="testModal" class="modal fade" tab-index="-1">
+             <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1>modal header</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h2>BODY</h2>
+                    </div>
+                    <div class="modal-footer">
+
+                    </div>
+                </div>
+             </div>
+         </div>
+
+         <div id="box2Modal" class="modal fade" tab-index="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1>this is the modal header</h1>
+                        <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>this is the actual body of the dialog box to be interacted or displayed.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <p>this is an optional block that will contain additional stuff, usually function butons</p>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">CLOSE</button>
+                    </div>
+                </div>
+            </div>
+         </div>
+
+         <div id="box3Modal" class="modal fade" tab-index="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1>header box 3</h1>
+                        <button class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>actual modal body content for modal box 3</p>
+                        <p>in order for the footer to look this way justify-content-between and each element within needs to be
+                            in a div container otherwise it will use the enter content of what's there as a single element and it
+                            won't lay them out horizontally in columns but rather in rows. The flex-column is the default so that
+                            the elements will be placed in a row from left to right in this case even spacing between, the flex-md-row 
+                            will cause the column nature to revert to rows instead and each 'columnn' will be promoted to an entire row
+                            and present below eachother, again use the div containers to properly handle this.
+                        </p>
+                    </div>
+                    
+                    <div class="modal-footer justify-content-between align-items-center flex-column flex-md-row">
+                        <div class="mb-3 p-2">
+                            <p>footer stuff</p>
+                        </div>
+                        <div class="mb-3 p-2">
+                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+         </div>
+         
+         <div id="formModal" class="modal fade" tab-index="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3>Input Form</h3>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="field1">Field1:</label>
+                            <input type="text" class="form-control" id="field1">
+                        </div>
+                        <div class="mb-3">
+                            <label for="field2">Field2:</label>
+                            <input type="text" class="form-control" id="field2">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <p>footer block</p>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+         </div>
+
+         <div id="form2Modal" class="modal fade" tab-index="-1">
+            <div class="modal-dialog modal-dialog-centered">
+               <div class="modal-content">
+                  <div class="modal-header">
+                      <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                  </div>
+                  <div class="modal-body">
+                    <p> dialog body</p>
+                  </div>
+                  <div class="modal-footer">
+                     <p>optional footer part</p>
+                  </div>
+               </div>
+            </div>
+         </div>
+         
+        <div id="finalModal" class="modal fade" tab-index="-1">
+           <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                   <h1>Modal header part</h1>
+                   <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                   <p>modal body parts</p>
+                </div>
+                <div class="modal-footer">
+                   <p>optional modal footer</p>
+                </div>
+              </div>
+           </div>
+        </div> 
+
+        <div class="alert alert-success alert-dismissable show fade">
+            <p>alert message</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+
+        <div class="accordion" id="accMain">
+
+           <div class="accordion-item">
+              <h2 class="accordion-header" id="heading1">Page1
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne">
+                Accordion #1
+              </button>
+              </h2>
+           </div>
+           <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#accMain">
+                 <div class="accordion-body">
+                    ACCORDION BODY
+                 </div>
+           </div>
+
+        </div> <!--accordion block-->
+
+         <div id="root"></div>
+
+         <script src="{{url_for('static',filename='js/bootstrap.bundle.min.js')}}"></script>   
+         <script src="{{url_for('static',filename='js/jquery.js')}}"></script>
+
+         <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+         <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+         <script>
+            const root = ReactDOM.createRoot(document.getElementById("root"));
+            root.render(React.createElement("h1", null, "Hello React!"));
+         </script>   
+         
+    </body>
+</html>
