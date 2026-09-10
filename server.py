@@ -11,7 +11,7 @@ app.secret_key = os.environ.get("SECRET_KEY","3fas35sjklaf359a0f0dsfds0f0")
 #CHECK EACH REQUEST TO MAKE SURE YOU'RE LOGGED IN
 @app.before_request
 def require_login():
-    print("Client Request endpoint",request.endpoint)
+    print("DEBUG BEFORE REQUEST: Client Request endpoint",request.endpoint)
 
     if request.path == "/testing":
        return render_template("testing.html") 
@@ -71,7 +71,7 @@ def require_login():
         
         if procresult["template"] or not is_rest:
             print("DEBUG: NAVIGATE TO:",procresult["template"])
-            return render_template(procresult["template"],data=procresult["data"])
+            return render_template(procresult["template"],data=procresult["data"],username=session.get("username"))
         
     elif is_rest and svc and func:
         #jsondata = request.get_json()
@@ -123,13 +123,15 @@ def login():
     username = request.form.get("username")
     password = request.form.get("password")
     action = request.form.get("action")
+    userid:int = 0
 
     print("CLIENT DATA:",username,password,action)
 
-    isok,returnmessage = get_user(username,password,action)
+    userid,isok,returnmessage = get_user(username,password,action)
     print("RETURN DATA FROM GET_USER",isok,returnmessage)
 
     if isok:
+       session["userid"] = userid
        session["username"] = username
        session["loggedin"] = True
        return redirect(url_for("dashboard"))
@@ -140,14 +142,19 @@ def login():
 #LOAD THE MAIN DASHBOARD FOR MY COLLECTION OF MOVIES
 @app.route("/dashboard")
 def dashboard():
+        
     if 'username' not in session:
         return redirect('/')
     if not session.get("loggedin"):
         return redirect('/')
     flash("ID:" + session.get("username"),"success")
-
+    
     username = session.get("username")
-    return render_template("dashboard.html",username=username)
+
+    print("DEBUG: IN THE /DASHBOARD ROUTINE")
+    url:str = "/dashboard?svc=services.dbproc&func=get_mymovies"
+    return redirect(url)
+    #return render_template("dashboard.html",username=username)
 ##################################################################
 
 #SETUP THE PYTHON SERVER FOR LISTENING FOR WEB REQUEST ON 5001

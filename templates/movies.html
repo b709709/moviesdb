@@ -69,6 +69,11 @@
                              class="btn-edit edit-icon" data-bs-toggle="modal" data-bs-target="#editModal">✏️</span>
                        <span data-movieid="{{movie.id}}" 
                              class="delete-icon btn-delete">🗑️</span>
+                       {% if movie.user_has %}      
+                            <span class="btn-unlink delete-icon" data-movieid="{{movie.id}}">⛓️‍💥</span>
+                        {% else %}
+                            <span class="btn-link  delete-icon" data-movieid="{{movie.id}}">🔗</span>    
+                       {% endif %}
             
                    </div>
                </div>
@@ -127,6 +132,19 @@
        </div><!--modal-dialog-->
     </div><!--editModal-->
     
+    <!-- link/unlink functions begin -->
+    <script>
+      $(document).on("click",".btn-link",async function() {
+         const movieid = this.dataset.movieid;
+         console.log(movieid);
+      });
+      $(document).on("click",".btn-unlink",async function(){
+        const movieid = this.dataset.movieid;
+        console.log(movieid);
+      });
+    </script>  
+    <!-- link/unlink functions end -->
+
     <!-- delete functions begin -->
     <script>
         

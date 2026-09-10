@@ -12,6 +12,7 @@ def get_connection():
 def get_user(username,password,action):
     print(username,password,action)
 
+    sessionid:int = 0 #session user_id
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
@@ -26,11 +27,12 @@ def get_user(username,password,action):
 
         print("HOW MANY ROWS RETURNED FROM THE LOGIN CHECK:", len(rows),rows[0].get("username"))
         if len(rows) == 1 and rows[0].get("password") == password:
-            return True,"User found goto dashboard."
+            sessionid = rows[0].get("id")
+            return sessionid,True,"User found goto dashboard."
         elif len(rows) == 1 and rows[0].get("password") != password:
-            return False,"Invalid password entered for this user."
+            return sessionid,False,"Invalid password entered for this user."
         else: #no record 
-            return False,"User was not found, please retry or signup."
+            return sessionid,False,"User was not found, please retry or signup."
 
         
     if action == "signup":
@@ -69,5 +71,5 @@ def get_user(username,password,action):
                 cur.close()
                 conn.close()
 
-    return bok,returnmsg
+    return sessionid,bok,returnmsg
     

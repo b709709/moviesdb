@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        <script src="{{url_for('static',filename='js/jquery.js')}}"></script>
         <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{url_for('static',filename='css/global.css')}}">
     </head>
@@ -23,6 +24,59 @@
          </div>
         </div>
    
+        <div class="data-list">
+            <div class="data-row-header">
+                <div><a>Movie Title</a></div>
+                <div><a>Movie Year</a></div>
+                <div><span title="Remove Movie"></span></div>
+            </div>
+        {% for datarow in data %}
+            <div class="data-row" id="user_movie-{{datarow.id}}">
+                <div class="movie-id">{{datarow.title}}</div>
+                <div class="user-id">{{datarow.year}}</div>
+                <div class="actions">
+                        <span id="btndelete" data-userid = "{{datarow.user_id}}" 
+                              data-movieid = "{{datarow.movie_id}}"
+                              title="Delete Current Record" class="delete-icon btnDelete">
+                            🗑️
+                        </span>
+                        
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+
+        <!--begin script for delete functions -->
+        <script>
+                 $(document).on("click",".btnDelete",async function(){
+                     const userid = this.dataset.movieid;
+                     const movieid = this.dataset.userid;
+
+                     const response = await fetch("/api/movie?svc=api.movie&func=deleteLink", {
+                        method:"POST",
+                        headers:{"Content-Type":"application/json"},
+                        body:JSON.stringify({"movieid":movieid,"userid":userid})
+                     });
+
+                     responsedata = await response.json();
+                     console.log("respondata received");
+                     if (response.ok && responsedata.status == true){
+                        console.log("response is ok and respondata is true");
+                        ele = document.getElementById("user_movie-" + userid.trim());
+                        if (ele) {
+                            console.log("DEBUG INSIDE ELE to remove");
+                            console.log(ele);
+                            ele.remove();
+                        }
+                     }
+                     else {
+                        console.log("Error occurred during the unlink");
+                     }
+                 });
+        </script>
+        <!-- end script for delete functions -->
+
+    
     <script src="{{url_for('static',filename='js/bootstrap.bundle.min.js')}}"></script>
     </body>
 </html>

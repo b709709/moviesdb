@@ -2,6 +2,40 @@ import psycopg2.extras
 from psycopg2 import errors
 from services.db import get_connection  #single entry point for processing db connections
 
+def deleteLink(session,request):
+    isok = False
+    smsg = ""
+    data = request.json
+    imovieid:int = data["movieid"]
+    iuserid:int = data["userid"]
+
+    print("DEBUG: in the deleteLink function",imovieid,iuserid)
+
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    sql = cur.mogrify(f"DELETE FROM user_movie WHERE user_movie.user_id = %s AND user_movie.movie_id = %s",(iuserid,imovieid))
+
+    print("DEBUG: QUERY STATEMENT",sql)
+    try:
+        cur.execute(sql)
+        conn.commit()
+        isok = True
+        smsg = "Movie Successfully removed from your collection."
+    except:
+        conn.rollback()
+        isok = False
+        smsg = "Error occurred during removal of movie from your collection, please refresh and retry."
+    finally:
+        cur.close()
+        conn.close()
+
+
+    return {
+        "status":isok,
+        "msg":smsg
+    }
+
 def deleteMovie(session,request):
     isok = False
     smsgs = ""
