@@ -30,6 +30,42 @@ def deleteMovie(session,request):
         "msg":smsgs
     }
 
+def saveEdit(session,request):
+    isok = False
+    smsgs = ""
+    data = request.json
+    updatedrow = None
+
+    stitle = data["title"]
+    iyear = data["year"]
+    id = data["id"]
+
+    conn =get_connection()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    sql = cur.mogrify(f"UPDATE movie set title='{stitle}', year={iyear} WHERE id = {id} RETURNING *")
+
+    print("DEBUG IN MOVIE.PY UPDATE MOVIE RECORD:",sql)
+
+    try:
+        cur.execute(sql)
+        conn.commit()
+        updatedrow = cur.fetchone()
+        isok = True
+        smsgs = "Movie record successfully updated."
+    except psycopg2.Error as e:
+        conn.rollback()
+        isok = False
+        smsgs = "Error occurred during record update:" + e.pgerror
+    finally:
+        cur.close()
+        conn.close()
+
+    return {
+        "status":isok,
+        "msg":smsgs,
+        "data":updatedrow
+    }
+
 def addMovie(session,request):
     isok = False
     smsg = "Test Response"
@@ -74,3 +110,53 @@ def addMovie(session,request):
         "rowid":irowid,
         "newrow":newrow
     }
+
+def batchLoad(session,request):
+    print("DOING A MASSIVE LOAD")
+    isok:bool = False
+    smsgs:str = ""
+    #title:str, year:int, studio:int
+    movies = [
+               
+               ("Step Brothers",2008,1)
+              
+              ]
+
+    #isok = True
+    #smsgs = "This was a fake batch load to get the async right."
+    #return {
+    #    "success":isok,
+    #    "msg":smsgs
+    #}
+
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
+    #use the %s the execute will take the ,movie as the data row of elements
+    #make sure the order of the data in the file MATCH the order of the insert 
+    #statement so in this case title, year and studio_id in that order.
+    i:int = 0
+    for movie in movies:
+
+        try:
+            sql = """
+                 INSERT INTO movie (title,year,studio_id)
+                 VALUES (%s,%s,%s)
+                 """
+            cur.execute(sql,movie)
+            conn.commit() 
+        except Exception as e:
+            i = i + 1
+            conn.rollback()
+            print("Bad Row:",movie,e)
+
+    cur.close()
+    conn.close()
+    isok = True
+    smsgs = "Batch Load Complete: Error Count: " + str(i)
+
+    return {
+        "success":isok,
+        "msg":smsgs
+    }
+    

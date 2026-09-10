@@ -11,15 +11,30 @@ def get_connection():
     )
 
 def get_movies(session,request):
-    print("in the dbproc.py get_movies method",session["username"],request.args)
+    #print("in the dbproc.py get_movies method",session["username"],request.args)
     rows = []
     json = jsonify("")
-    isok = True
-    smsg = ""
+    isok:bool = True
+    smsg:str = ""
+    searchvalue:str = ""
 
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    sql = cur.mogrify(f"SELECT * from movie ORDER BY title")
+
+    try:
+      searchvalue = request.args.get("searchInput")
+    except:
+      #print("No SearchInput argument was found in the list.")   
+      searchvalue = ""
+        
+    if searchvalue == "" or not searchvalue:
+       sql = cur.mogrify(f"SELECT * from movie ORDER BY title")
+    else:
+       searchvalue = searchvalue.replace("*","%")
+       sql = cur.mogrify(f"SELECT * from movie WHERE title ILIKE %s ORDER BY title",(searchvalue,))
+
+
+    print("DEBUG: ELSE CONDITION IN GET_MOVIES SEARCHVALUE:",searchvalue)
 
     try:
         cur.execute(sql)
@@ -27,7 +42,6 @@ def get_movies(session,request):
         isok = True
         smsg = "Records retrieved for movie"
     except:
-        conn.rollback()
         isok = False
         smsg = "Error occured during retrieval of movie list."
     finally:

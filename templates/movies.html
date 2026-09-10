@@ -8,7 +8,7 @@
 
     <body>
         <div class="dash-header">
-            <h1>movies</h1>
+            <h1>Movies</h1>
         </div>
 
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-center mb-3 p-2 bg-light border rounded">
@@ -17,9 +17,35 @@
            <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/dashboard">Home</a>
            <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/actors?svc=services.dbproc&func=get_actors">Actors</a>
            <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/studios?svc=services.dbproc&func=get_studios">Studios</a>
+           <a id="btnbatchload" class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" onclick="batchLoad()">Batch Load</a>
            
          </div>
         </div>
+
+        <!-- TOOLBAR START -->
+         <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 mb-2 p-2 bg-light border rounded">
+
+            <form class="d-flex flex-grow-1 m-0" method="GET" action="/dashboard?svc=services.dbproc&func=get_movies">
+                <input type="hidden" name="svc" value="services.dbproc"> <!-- needed for query string -->
+                <input type="hidden" name="func" value="get_movies">
+
+                <div class="input-group w-100">
+                    <span class="input-group-text">Search</span>
+                    <input type="text" id="searchInput" name="searchInput" class="form-control" placeholder="Movie Name * for Wildcard">
+                </div>
+                <div class="input-group w-100">
+                    <button  type="submit" class="btn btn-primary" id="searchButton">Go</button>
+                </div>
+            </form>
+
+            <div class="d-flex gap-2">
+                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addModal">➕ Add Movie</button>
+                <a href="/dashboard?svc=services.dbproc&func=get_movies" class="btn btn-secondary" id="resetview">↺ Reset</a>
+            </div>
+
+        </div>
+        <!-- TOOLBAR END -->
+
 
         <div class="data-list">
             <div class="data-row-header">
@@ -33,8 +59,8 @@
             
             {% for movie in data %}
                <div class="data-row" id="movie-{{movie.id}}">
-                   <div>{{movie.title}}</div>
-                   <div>{{movie.year}}</div>
+                   <div class="movie-title">{{movie.title}}</div>
+                   <div class="movie-year">{{movie.year}}</div>
                    <div class="actions">
                        <span data-movieid="{{movie.id}}" 
                              data-movietitle ="{{movie.title}}"
@@ -131,8 +157,10 @@
         const editModal = document.getElementById("editModal");
 
         editModal.addEventListener('shown.bs.modal', () => {
+                /*
                 document.getElementById('edit-title').value = '';
                 document.getElementById('edit-year').value = 0;
+                */
              });
         editModal.addEventListener('shown.bs.modal', () => {
                 document.getElementById('edit-title').focus();
@@ -143,9 +171,59 @@
             const stitle = ele.dataset.movietitle;
             const iyear = ele.dataset.movieyear;
             const imovieid = ele.dataset.movieid;
+            const bsave = document.getElementById("saveEdit");
+
+            bsave.setAttribute("data-movieid",imovieid);
+            
             console.log(stitle, iyear, imovieid);
             //set the field values from the ele
-            
+            document.getElementById("edit-title").value = stitle;
+            document.getElementById("edit-year").value = iyear;
+            document.getElementById("edit-title").focus();
+
+        }
+        document.getElementById("saveEdit").onclick = async function(){
+            const stitle = document.getElementById("edit-title").value;
+            const iyear = document.getElementById("edit-year").value;
+
+            //need to set this when the edit is opened becuase there is no
+            // dataset value at this point, because this is per row it has
+            // to be set on init and on dynamic row adds.
+            const iid = document.getElementById("saveEdit").dataset.movieid;
+
+            console.log("The movieid that should be now set on the button:" + iid.toString());
+
+            const response = await fetch("/api/movie?svc=api.movie&func=saveEdit",{
+                  method:"POST",
+                  headers:{"Content-Type":"application/json"},
+                  body:JSON.stringify({"title":stitle,
+                                       "year":iyear,
+                                       "id":iid
+                  })
+            });
+
+            const responsedata = await response.json();
+            if (response.ok) {
+                console.log("edit save is ok");
+            }
+            else {
+                console.log("edit save is not ok");
+            }
+
+            const modalEl = document.getElementById("editModal");
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            const srow = "movie-" + iid;
+            console.log("DEBUG");
+            console.log(srow);
+            gridrow = document.getElementById(srow);
+            //movie-title movie-year
+            gridrow.querySelector(".movie-title").innerText = stitle;
+            gridrow.querySelector(".movie-year").innerText = iyear;
+            modal.hide();
+
+            //TO BE DONE!!!!!
+            //NEED TO RUN AN UPDATE OF THE ROW RECORD FOR THE NEW VALUES 
+            //AND THE EDIT BUTTON DATASET VALUES
         }
     </script>
     <!-- add functions begin -->
@@ -207,6 +285,25 @@
               
  
     </script> <!-- add functions end -->
+    <script> <!-- batch record load functions -->
+        async function batchRun() {
+              const response = await fetch("/api/movie?svc=api.movie&func=batchLoad",
+                {
+                    method:"POST",
+                    headers:{"Content-Type":"application/json"},
+                    body:JSON.stringify({"filename":"somefile"})
+                });
+               const responsedata = await response.json;
+               console.log("finished the batch load faked it.");
+               location.reload();
+        }
+
+        function batchLoad(){
+             batchRun();
+             
+        }
+        
+    </script> <!-- end of batch record load functions -->
 
     <script src="{{url_for('static',filename='js/bootstrap.bundle.min.js')}}"></script>    
     </body>
