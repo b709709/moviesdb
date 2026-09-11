@@ -85,7 +85,7 @@ def get_movies(session,request):
         
     if searchvalue == "" or not searchvalue:
        #sql = cur.mogrify(f"SELECT * from movie ORDER BY title")
-        sql = cur.mogrify(f"SELECT *, EXISTS(SELECT 1 FROM user_movie um WHERE um.movie_id = movie.id AND um.user_id = %s) as user_has FROM movie",(user_id,))
+        sql = cur.mogrify(f"SELECT *, EXISTS(SELECT 1 FROM user_movie um WHERE um.movie_id = movie.id AND um.user_id = %s) as user_has FROM movie ORDER BY movie.title",(user_id,))
     else:
        searchvalue = searchvalue.replace("*","%")
        #sql = cur.mogrify(f"SELECT * from movie WHERE title ILIKE %s ORDER BY title",(searchvalue,))
@@ -95,8 +95,8 @@ def get_movies(session,request):
 
     #THIS IS THE TEST QUERY TO MAKE SURE IT WILL BUILD THE HAS_USER FIELD NEED TO MERGE THIS INTO
     #THE ABOVE 2 SQL POSSIBILITIES
-    sql = cur.mogrify(f"SELECT *, EXISTS(SELECT 1 FROM user_movie um WHERE um.movie_id = movie.id AND um.user_id = %s) as user_has FROM movie",(user_id,))
-    print("DEBUG: TEST SQL QUERY FOR LINKED MOVIES:",sql)
+    #sql = cur.mogrify(f"SELECT *, EXISTS(SELECT 1 FROM user_movie um WHERE um.movie_id = movie.id AND um.user_id = %s) as user_has FROM movie",(user_id,))
+    #print("DEBUG: TEST SQL QUERY FOR LINKED MOVIES:",sql)
 
     try:
         cur.execute(sql)

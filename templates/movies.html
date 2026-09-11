@@ -134,13 +134,62 @@
     
     <!-- link/unlink functions begin -->
     <script>
+      //LINK THE MOVIE TO THE USER
       $(document).on("click",".btn-link",async function() {
          const movieid = this.dataset.movieid;
          console.log(movieid);
+         const response = await fetch("/api/movie?svc=api.movie&func=linkUserMovie",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({"movieid":movieid})
+         });
+         responsedata = await response.json();
+         if (response.ok && responsedata.status == true) {
+             console.log("DEBUG UPDATE TO USE THE UNLINK SYMBOL");
+             console.log(this.innerText);
+             this.classList.remove("btn-link");
+             this.classList.add("btn-unlink");
+             this.innerText = "⛓️‍💥";
+              //change the current link on the row to the UNLINK
+              //remove the class btn-link and add btn-unlink
+         }
+         else {
+             
+         }
+
       });
+      //UNLINK THE MOVIE FROM THE USER
       $(document).on("click",".btn-unlink",async function(){
         const movieid = this.dataset.movieid;
         console.log(movieid);
+
+        const response = await fetch("/api/movie?svc=api.movie&func=deleteLinkNoUser", {
+                        method:"POST",
+                        headers:{"Content-Type":"application/json"},
+                        body:JSON.stringify({"movieid":movieid})
+                     });
+
+                     responsedata = await response.json();
+                     console.log("respondata received");
+                     if (response.ok && responsedata.status == true){
+                        console.log("response is ok and respondata is true");
+                        this.classList.remove("btn-unlink");
+                        this.classList.add("btn-link");
+                        this.innerText = "🔗";
+                        //NEED TO CHANGE THE ICON ON THIS TO THE LINK ICON
+                        //remove the class .btn-unlink and add the class .btn-link
+
+                        //ele = document.getElementById("user_movie-" + userid.trim());
+                        //if (ele) {
+                        //   console.log("DEBUG INSIDE ELE to remove");
+                        //    console.log(ele);
+                        //    ele.remove();
+                        //}
+                     }
+                     else {
+                        console.log("Error occurred during the unlink");
+                     }
+        //this is where the same code that does the delete for the user_movie record from the dashboard.html happens.
       });
     </script>  
     <!-- link/unlink functions end -->

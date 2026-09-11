@@ -11,7 +11,7 @@ app.secret_key = os.environ.get("SECRET_KEY","3fas35sjklaf359a0f0dsfds0f0")
 #CHECK EACH REQUEST TO MAKE SURE YOU'RE LOGGED IN
 @app.before_request
 def require_login():
-    print("DEBUG BEFORE REQUEST: Client Request endpoint",request.endpoint)
+    #print("DEBUG BEFORE REQUEST: Client Request endpoint",request.endpoint)
 
     if request.path == "/testing":
        return render_template("testing.html") 
@@ -38,9 +38,9 @@ def require_login():
         "headers": dict(request.headers),
         "clientip": request.remote_addr
     }
-    print(clientinfo)
+    #print(clientinfo)
 
-    print(type(clientinfo))
+    #print(type(clientinfo))
 
     is_rest = False
     is_rest = (
@@ -63,14 +63,14 @@ def require_login():
     if svc and func and not is_rest:
         module = importlib.import_module(f"{svc}")
         procresult = getattr(module,func)(session,request)
-        print("results from module",procresult["status"],
-          procresult["msg"],
-          procresult["template"],
-          type(procresult["data"])
-          )
+        #print("results from module",procresult["status"],
+        #  procresult["msg"],
+        #  procresult["template"],
+        #  type(procresult["data"])
+        #  )
         
         if procresult["template"] or not is_rest:
-            print("DEBUG: NAVIGATE TO:",procresult["template"])
+            #print("DEBUG: NAVIGATE TO:",procresult["template"])
             return render_template(procresult["template"],data=procresult["data"],username=session.get("username"))
         
     elif is_rest and svc and func:
@@ -79,7 +79,7 @@ def require_login():
         #SESSION INFO AND REQUEST OBJECT request.json HAS THE CLIENT JSON POST INFO 
         procresult = getattr(module,func)(session,request)
         #JUST A JSON RESPONSE PERFECT
-        print(procresult)
+        #print(procresult)
         return (procresult)
     
     #the endpoint will be services/dbjob (which is the path to the code)
@@ -98,7 +98,7 @@ def index():
 #LOGOUT OF APPLICATION
 @app.route("/logout")
 def logout():
-    print("logging out")
+    #print("logging out")
     session.clear()
     return redirect("/?loggedout=1")
 
@@ -125,10 +125,10 @@ def login():
     action = request.form.get("action")
     userid:int = 0
 
-    print("CLIENT DATA:",username,password,action)
+    #print("CLIENT DATA:",username,password,action)
 
     userid,isok,returnmessage = get_user(username,password,action)
-    print("RETURN DATA FROM GET_USER",isok,returnmessage)
+    #print("RETURN DATA FROM GET_USER",isok,returnmessage)
 
     if isok:
        session["userid"] = userid
@@ -151,7 +151,7 @@ def dashboard():
     
     username = session.get("username")
 
-    print("DEBUG: IN THE /DASHBOARD ROUTINE")
+    #print("DEBUG: IN THE /DASHBOARD ROUTINE")
     url:str = "/dashboard?svc=services.dbproc&func=get_mymovies"
     return redirect(url)
     #return render_template("dashboard.html",username=username)
