@@ -9,7 +9,7 @@
    
         <!--HEADER-->
         <div class="dash-header">
-            <h1>My Movie Dashboard</h1>
+            <h1>🎞️ My Movie Dashboard</h1>
             <div class="dash-right dash-user" >ID:{{username}}
             <a id="btnlogout" href="/logout" class="btn btn-danger">Logout</a>
             </div>
@@ -28,24 +28,79 @@
             <div class="data-row-header">
                 <div><a>Movie Title</a></div>
                 <div><a>Movie Year</a></div>
+                <div><a>Media Types 👉</a></div>
                 <div><span title="Remove Movie"></span></div>
             </div>
         {% for datarow in data %}
             <div class="data-row" id="user_movie-{{datarow.id}}">
                 <div class="movie-id">{{datarow.title}}</div>
-                <div class="user-id">{{datarow.year}}</div>
+                <div class="user-id d-flex justify-content-center">{{datarow.year}}</div>
+                <div class="mediatype d-flex justify-content-center">
+
+                    {% if datarow.vhs != true %} 
+                      <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="vhs" title="Add VHS Version">📼</span>
+                    {% endif %}  
+                    {% if datarow.dvd != true %}
+                      <span   data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="dvd" title="Add DVD Version">📀</span>
+                    {% endif %}
+                    {% if datarow.bluray != true %}
+                      <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="bluray" title="Add BLURAY Version">🧿</span>
+                    {% endif %}
+                    {% if datarow.digital != true %}
+                      <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="digital" title="Add DIGITAL Version">💾</span>
+                    {% endif %}
+
+                </div>
                 <div class="actions">
                         <span id="btndelete" data-userid = "{{datarow.user_id}}" 
                               data-movieid = "{{datarow.movie_id}}"
                               title="Delete Current Record" class="delete-icon btnDelete">
                             🗑️
                         </span>
+
+                        {% if datarow.vhs == true %}
+                        <span title="VHS Version">📼</span>
+                        {% endif %}
+                        {% if datarow.dvd == true %}
+                        <span title="DVD Version">📀</span>
+                        {% endif %}
+                        {% if datarow.bluray == true %}
+                        <span title="BLURAY Version">🧿</span>
+                        {% endif %}
+                        {%if datarow.digital == true %}
+                        <span title="DIGITAL Version">💾</span>
+                        {%endif%}
                         
                 </div>
             </div>
         {% endfor %}
         </div>
 
+        <!-- begin script for btnMedia functions for adding media types -->
+        <script>
+             //ADDING A MEDIA TYPE
+             $(document).on("click",".btnMedia",async function(){
+               const mediatype = this.dataset.type;
+               const movieid = this.dataset.movieid;
+
+               const response = await fetch("/api/movie?svc=api.movie&func=addMedia",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({"movieid":movieid,"mediatype":mediatype})  //movied user_movie.movie_id, mediatype = dvd,bluray,digital,vhs, method = add
+               });
+
+               const responsedata = await response.json();
+               if (response.ok && responsedata.status == true )
+               {
+                //move this type to the right column and remove it from this one.
+               }
+               else {
+                  //problem moving this type over
+               }
+
+             });
+        </script>
+        <!-- end script for btnMedia functions for adding media types -->
         <!--begin script for delete functions -->
         <script>
                  $(document).on("click",".btnDelete",async function(){

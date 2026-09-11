@@ -40,13 +40,19 @@ def get_mymovies(session,request):
                     ON id = user_movie.movie_id 
             WHERE user_movie.user_id = 1"""
 
-            sql = cur.mogrify(f"SELECT movie.id, movie.title, movie.year, user_movie.user_id, user_movie.movie_id FROM user_movie JOIN movie ON movie.id = user_movie.movie_id WHERE user_movie.user_id = %s",(user_id,))
+            sql = cur.mogrify(f"SELECT movie.id, movie.title, movie.year, user_movie.user_id, user_movie.movie_id, user_movie.dvd, user_movie.bluray, user_movie.digital, user_movie.vhs FROM user_movie JOIN movie ON movie.id = user_movie.movie_id WHERE user_movie.user_id = %s",(user_id,))
             cur.execute(sql)
             rows = cur.fetchall()
+        except psycopg2.Error as e:
+            conn.rollback()
+            isok = False
+            smsg = "Error During DB:" + e.pgerror
+            print("DEBUG: DB DB DB ERROR",smsg)
         except:
             conn.rollback()
             isok = False
             smsg = "Error Ocurred while getting user collection of movies."
+            print("DEBUG: ERROR OCCURED")
     except:
         conn.rollback()
         print("DEBUG: ERROR OCURRED DURING GETTING USER.")
@@ -82,6 +88,21 @@ def get_movies(session,request):
     except:
       #print("No SearchInput argument was found in the list.")   
       searchvalue = ""
+
+    #MERGE THIS INTO THE SELECT STATEMENT BELOW SO WE CAN PULL THE TYPES AS WELL DVD, BLURAY ETC.
+    #ACTUALLY MAYBE JUST ADD AN ADDITIONAL TYPES COLUMN FOR THE MY MOVIES IN DAHSBOARD.HTML AND SHOW THE DIFFERENT ICONS FOR THE TYPES SO YOU CAN JUST CLICK THE TYPE AND
+    #IT ADDS IT TO THE RIGHT HAND SIDE SO THIS WAY YOU WOULDN'T NEED THIS CHUNK IN HERE BUT THAT'S FINE NOW WE HAVE IT.
+    #"""
+    #SELECT
+    #movie.*,
+    #um.*,  -- any fields you want from user_movie
+    #(um.movie_id IS NOT NULL) AS user_has
+    #    FROM movie
+    #    LEFT JOIN user_movie AS um
+    #        ON um.movie_id = movie.id
+    #    AND um.user_id = %s
+    #    ORDER BY movie.title;
+    #        """
         
     if searchvalue == "" or not searchvalue:
        #sql = cur.mogrify(f"SELECT * from movie ORDER BY title")
