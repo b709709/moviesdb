@@ -12,3 +12,22 @@ function showAlert(message,type = "success") {
             wrapper.remove();
     },3000);        
 }
+
+function confirmBox(somefunc) {
+        bootbox.confirm({
+        title: 'Confirm Delete',
+        message: 'Are you sure you want to delete this? This cannot be undone.',
+        buttons: {
+                cancel: {
+                label: '<i class="fa fa-times"></i> Cancel'
+                },
+                confirm: {
+                label: '<i class="fa fa-check"></i> Confirm'
+                }
+        },
+        callback: function (result) {
+                console.log('This was logged in the callback: ' + result);
+                somefunc(result);
+        }
+        });
+}

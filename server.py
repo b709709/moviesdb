@@ -69,9 +69,18 @@ def require_login():
         #  type(procresult["data"])
         #  )
         
+        recordcount:int = 0
+
         if procresult["template"] or not is_rest:
             #print("DEBUG: NAVIGATE TO:",procresult["template"])
-            return render_template(procresult["template"],data=procresult["data"],username=session.get("username"))
+            try:
+              resultset = procresult["data"]
+              if resultset:
+                recordcount = len(resultset)
+            except:
+                recordcount = 0
+
+            return render_template(procresult["template"],data=procresult["data"],username=session.get("username"),recordcount=recordcount)
         
     elif is_rest and svc and func:
         #jsondata = request.get_json()

@@ -13,6 +13,60 @@ def setMediaType(session,request):
         "data":data
     }
 
+def delMedia(session,request):
+    isok:bool = False
+    smsg:str = ""
+    data = None
+    data = request.json
+
+    imovieid:int = data["movieid"]
+    iuserid:int = session.get("userid")
+    smediatype = data["mediatype"]
+
+    #print("DEBUG: delMedia value",imovieid, iuserid,smediatype)
+    #UPDATE this user_movie record for the type with value False
+
+    #isok = True
+    #smsg = "Testing to move the icons on the screen"
+
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+    
+    if smediatype == "vhs":
+        sql = cur.mogrify(f"UPDATE user_movie set vhs = false WHERE user_movie.user_id=%s AND user_movie.movie_id = %s",(iuserid,imovieid))
+    elif smediatype == "digital":
+        sql = cur.mogrify(f"UPDATE user_movie set digital = false WHERE user_movie.user_id=%s AND user_movie.movie_id = %s",(iuserid,imovieid))
+    elif smediatype == "dvd":
+        sql = cur.mogrify(f"UPDATE user_movie set dvd = false WHERE user_movie.user_id=%s AND user_movie.movie_id = %s",(iuserid,imovieid))
+    elif smediatype == "bluray":
+        sql = cur.mogrify(f"UPDATE user_movie set bluray = false WHERE user_movie.user_id=%s AND user_movie.movie_id = %s",(iuserid,imovieid))
+    
+        #isok = True
+        #smsg = "Testing the moving of the icons"
+    
+    try:
+        cur.execute(sql)
+        conn.commit()
+        isok = True
+        smsg = "Media Type removed from this movie."
+    except psycopg2.Error as e:
+        conn.rollback()
+        isok = False
+        smsg = "DB Error ocurred during update:" + e.pgerror
+    except:
+        conn.rollback()
+        isok = False
+        smsg = "Error occurred during update"
+    finally:
+        cur.close()
+        conn.close()
+
+    return {
+         "status":isok,
+         "msg":smsg,
+         "data":data
+    }
+
 def addMedia(session,request):
     isok:bool = False
     smsg:str = ""
@@ -23,10 +77,42 @@ def addMedia(session,request):
     iuserid:int = session.get("userid")
     smediatype = data["mediatype"]
 
-    print("DEBUG: addMedia values",imovieid, iuserid, smediatype)
+    #print("DEBUG: addMedia values",imovieid, iuserid, smediatype)
     #UPDATE this user_movie record for the type with value True
-    
 
+    conn = get_connection()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+    if smediatype == "vhs":
+       sql = cur.mogrify(f"UPDATE user_movie set vhs = true WHERE user_movie.user_id=%s AND user_movie.movie_id = %s",(iuserid,imovieid))
+    elif smediatype == "digital":
+       sql = cur.mogrify(f"UPDATE user_movie set digital = true WHERE user_movie.user_id=%s AND user_movie.movie_id = %s",(iuserid,imovieid))
+    elif smediatype == "dvd":
+       sql = cur.mogrify(f"UPDATE user_movie set dvd = true WHERE user_movie.user_id=%s AND user_movie.movie_id = %s",(iuserid,imovieid))
+    elif smediatype == "bluray":
+       sql = cur.mogrify(f"UPDATE user_movie set bluray = true WHERE user_movie.user_id=%s AND user_movie.movie_id = %s",(iuserid,imovieid))
+
+    #isok = True
+    #smsg = "Testing the moving of the icons"
+
+    try:
+        cur.execute(sql)
+        conn.commit()
+        isok = True
+        smsg = "Media Type added to this movie."
+    except psycopg2.Error as e:
+        conn.rollback()
+        isok = False
+        smsg = "DB Error ocurred during update:" + e.pgerror
+    except:
+        conn.rollback()
+        isok = False
+        smsg = "Error occurred during update"
+    finally:
+        cur.close()
+        conn.close()
+
+    #print("DEBUG RESULTS OF ADDING MEDIATYPE:",smsg)
     return {
         "status":isok,
         "msg":smsg,
@@ -254,9 +340,8 @@ def batchLoad(session,request):
     smsgs:str = ""
     #title:str, year:int, studio:int
     movies = [
-                            
-              
-               ("Solomon Kane",2009,1)              
+               ("Dynasty Warriors",2021,)             
+                                           
 
               ]
 

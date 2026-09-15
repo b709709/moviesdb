@@ -80,7 +80,7 @@ background:#d0d0d0;
   border-bottom: none;
 }
 
-.game-name, .actor-name {
+.game-name, .actor-name , .movie-title{
   font-weight: bold;
   
 }
@@ -103,17 +103,18 @@ background:#d0d0d0;
     padding: 4px;
 }
 
-.edit-icon:hover {
+
+.xedit-icon:hover {
     color: #4caf50;   /* green */
     
 }
 
-.delete-icon:hover {
+.xdelete-icon:hover {
     color: #f44336;   /* red */
     
 }
 
-.add-icon:hover {
+.xadd-icon:hover {
     color: #2196f3;   /* blue */
 }
 
@@ -134,3 +135,13 @@ background:#d0d0d0;
     width: 300px;
 }
 
+.data-row:hover, .actor-row:hover{
+  background-color:lightgreen;
+}
+
+.emoji-icon:hover, .edit-icon:hover, .delete-icon:hover, .add-icon:hover {
+  background-color: #4caf50;
+  -moz-border-radius:20px;
+  -webkit-border-radius:10px;
+  border-radius:10px;
+}
