@@ -54,6 +54,7 @@
 
         <div class="data-list">
             <div class="data-row-header">
+                <div class="movie-poster emoji-static">🏞️</div>
                 <div><a>Movie Title ({{recordcount}})</a></div>
                 <div><a>Movie Year</a></div>
                 <div><a>Media Types 👉</a></div>
@@ -61,6 +62,13 @@
             </div>
         {% for datarow in data %}
             <div class="data-row" id="user_movie-{{datarow.id}}">
+                <div class="movie-poster">
+                    {% if datarow.posterimage != '' %}
+                        <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename=datarow.posterimage)}}"/></div>    
+                    {% else %}
+                        <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename='images/poster/noposter.png')}}"/></div>
+                    {%endif%}
+                </div>
                 <div class="movie-title movie-id">{{datarow.title}}</div>
                 <div class="user-id d-flex justify-content-center">{{datarow.year}}</div>
                 <div class="mediatype d-flex justify-content-center">

@@ -9,6 +9,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY","3fas35sjklaf359a0f0dsfds0f0")
 
 #CHECK EACH REQUEST TO MAKE SURE YOU'RE LOGGED IN
+
 @app.before_request
 def require_login():
     #print("DEBUG BEFORE REQUEST: Client Request endpoint",request.endpoint)
@@ -19,7 +20,7 @@ def require_login():
     if request.endpoint and request.endpoint.startswith("static"):
         return
     
-    allowed_routes = ["index","login", "static"]
+    allowed_routes = ["index","login", "static"] 
     if "loggedin" not in session:
         if request.endpoint not in allowed_routes:
             return redirect(url_for("index"))
@@ -38,7 +39,7 @@ def require_login():
         "headers": dict(request.headers),
         "clientip": request.remote_addr
     }
-    #print(clientinfo)
+    #print("PATH",request.path)
 
     #print(type(clientinfo))
 

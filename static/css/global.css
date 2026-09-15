@@ -30,6 +30,7 @@ background:#d0d0d0;
 
 .game-row-header div, .actor-row-header div, .data-row-header div {
   padding-bottom:8px;
+  xpadding-left:1px;
 }
 
 .game-row-header div, .actor-row-header div, .data-row-header div {
@@ -64,6 +65,7 @@ background:#d0d0d0;
 .game-row div, .actor-row div, .data-row div {
   flex:1;
   border-right: 1px solid #444;
+  padding-left:2px; 
 }
 
 .game-row div:last-child,
@@ -139,9 +141,59 @@ background:#d0d0d0;
   background-color:lightgreen;
 }
 
+.emoji-static{
+  font-size: 20px;
+    padding: 4px;
+}
 .emoji-icon:hover, .edit-icon:hover, .delete-icon:hover, .add-icon:hover {
   background-color: #4caf50;
   -moz-border-radius:20px;
   -webkit-border-radius:10px;
   border-radius:10px;
 }
+
+div.movie-year, div.actions {
+   display: flex;
+    justify-content: center;   /* center left ↔ right */
+    align-items: center;        /* center top ↔ bottom */
+}
+.xposterthumb { /* this is for the thumbnail for the poster 105-> 160*/
+  width: 79px;
+  height: 120px;
+}
+.xposterthumb:hover{
+  width:105px;
+  height:160px;
+}
+
+.poster-wrapper {
+    position: relative;      /* anchor for absolute positioning */
+    width: 30px;             /* your thumbnail width 60 */
+    height: 50px;            /* your thumbnail height 90 */
+    overflow: visible;       /* allow the enlarged image to spill out */
+}
+
+.posterthumb {
+    width: 100%;
+    height: auto;
+    transition: transform 0.2s ease-in-out;
+    position: absolute;      /* prevents row expansion */
+    top: 0;
+    left: 0;
+    z-index: 10;             /* ensures it appears above other content */
+}
+
+.posterthumb:hover {
+    
+    transform: scale(4) translateX(10px);     /* enlarge the image */
+    z-index: 999;            /* bring it to the front */
+}
+
+div.movie-poster {
+  width:45px;
+  flex:unset;
+}
+
+
+body {background: #0C0C0C;
+        background: linear-gradient(0deg, #0C0C0C 0%, #C1BBCC 100%); }

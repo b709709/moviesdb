@@ -68,6 +68,7 @@
            
         <div class="data-list">
             <div class="data-row-header">
+                <div class="movie-poster emoji-static">🏞️</div>
                 <div><span title="Sort By Game" href="/dashboard?sort=name">Title ({{recordcount}})</span></div>
                 <div><span title="Sort By Console" href="/dashboard?sort=console">Year</span></div>
                 <div class="actions-header">
@@ -78,8 +79,17 @@
             
             {% for movie in data %}
                <div class="data-row" id="movie-{{movie.id}}">
-                   <div class="movie-title">{{movie.title}}</div>
-                   <div class="movie-year text-center">{{movie.year}}</div>
+                   <div class="movie-poster">
+                     {% if movie.posterimage != '' %}
+                       <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename=movie.posterimage)}}"/></div>    
+                     {% else %}
+                       <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename='images/poster/noposter.png')}}"/></div>
+                     {%endif%}
+                   </div>
+                   <div class="movie-title ">
+                      {{movie.title}}
+                   </div>
+                   <div class="movie-year">{{movie.year}}</div>
                    <div class="actions">
                        <span data-movieid="{{movie.id}}" 
                              data-movietitle ="{{movie.title}}"

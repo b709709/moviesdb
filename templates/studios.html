@@ -1,6 +1,7 @@
 <html>
     <head>
         <meta name="viewport" content="width=device-width,initial-scale=1">
+        <script src="{{url_for('static',filename='js/jquery.js')}}"></script>
         <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}">
         <link rel="stylesheet" href="{{url_for('static',filename='css/global.css')}}">
     </head>
@@ -61,14 +62,14 @@
             </div>
             {% for datarow in data %}
             <div class="data-row" id="studio-{{datarow.id}}">
-                <div class="actor-name">{{datarow.name}}</div>
+                <div class="studio-name">{{datarow.name}}</div>
                   <div class="actions">
                     <span title="Edit Current Record" class="edit-icon btnEdit" data-bs-toggle="modal" data-bs-target="#editModal"
                             data-studioid = "{{datarow.id}}"
                             data-studioname = "{{datarow.name}}"
                             onclick="openEditModal(this)"
                             >✏️</span>
-                        <span data-actorid = "{{datarow.id}}" id="btnDelete" title="Delete Current Record" class="delete-icon btnDelete">
+                        <span data-studioid = "{{datarow.id}}" id="btnDelete" title="Delete Current Record" class="delete-icon btnDelete">
                             🗑️
                         </span>
                   </div>
@@ -105,11 +106,14 @@
                  <button class="btn-close" data-bs-dismiss="modal" type="button"></button>
               </div>    
               <div class="modal-body">
-                <p>body</p>
+                <div class="mb-3">
+                    <label class="form-label">Studio Name</label>
+                    <input class="form-control" type="text" id="edit-name" name="edit-name"/>
+                </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss>Close</button>
+                <button type="button" class="btn btn-primary" id="saveEdit" dataset-studioid="0">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
               </div>
             </div>
         </div>
@@ -118,9 +122,91 @@
     <script>
           $(document).on("click",".btnDelete",async function() {
              //confirm box to delete record
+             
+             if (confirm("Are you sure you want to delete this record") == true)
+             {
+                //confirmed the deletion
+             }
+             else {
+                return;
+             }
+
+             const studioid = this.dataset.studioid;
+             let ele = document.getElementById("studio-" + studioid);
+             
+
+             const response = await fetch("api/actor?svc=api.studio&func=delStudio",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({"studioid":studioid})
+             });
+
+             const responsedata = await response.json();
+             if (response.ok && responsedata.status == true)
+             {
+                
+                if (ele){
+                    ele.remove();
+                }
+             }
+             else {
+                console.log("failed to delete" + responsedata.msg)
+             }
+
           });
     </script>
     <!--END logic for deleting a studio record -->
+
+    <!-- btnEdit logic for editing a studio record BEGIN -->
+    <script>
+        const editModal = document.getElementById('editModal');
+            editModal.addEventListener('shown.bs.modal', () => {
+
+            document.getElementById('edit-name').focus();
+            });
+             
+        $("#saveEdit").on("click",async function(){
+             const studioname = document.getElementById("edit-name").value;
+             const studioid = this.dataset.studioid;
+
+             const response = await fetch("api/studio?svc=api.studio&func=saveEdit",{
+                method:"POST",
+                headers:{"Content-Type":"application/json"},
+                body : JSON.stringify({"studioid":studioid,"studioname":studioname})
+                });
+             const responsedata = await response.json();
+             if (response.ok && responsedata.status == true){
+                console.log(responsedata.msg);
+                const datarow = document.getElementById("studio-" + studioid);
+                const col = datarow.querySelector(".studio-name");
+                const action = datarow.querySelector(".actions .btnEdit");
+                col.innerText = studioname;
+                action.dataset.studioname = studioname;
+                   
+             }
+             else {
+                console.log("Error in processing the save edit, please refresh and retry" + responsedata.msg);
+             }
+
+             const modalEl = document.getElementById("editModal");
+             const modal = bootstrap.Modal.getInstance(modalEl);  //always get the instance of the modal box, it's instance is created by bootstrap
+             modal.hide();
+
+            });
+
+        function openEditModal(ele){
+            studioid = ele.dataset.studioid;
+            studioname = ele.dataset.studioname;
+
+            const editModal = document.getElementById("editModal");
+            editModal.querySelector("#edit-name").value = studioname;
+            editModal.querySelector("#saveEdit").dataset.studioid = studioid;
+
+            //set the fields to blank
+
+        }
+    </script>
+    <!-- btnEdit logic for editing a studio record END -->
 
     <!-- btnSaveNew logic for adding a new studio -->
     <script>
