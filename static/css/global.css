@@ -199,3 +199,13 @@ div.movie-poster {
 
 body {background: #0C0C0C;
         background: linear-gradient(0deg, #0C0C0C 0%, #C1BBCC 100%); }
+
+.navbar-nav .nav-item form {
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-nav .nav-item {
+    padding-top: 0;
+    padding-bottom: 0;
+}        

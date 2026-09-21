@@ -24,65 +24,82 @@
            <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/studios?svc=services.dbproc&func=get_studios">🎬
              <span class="d-none d-sm-inline">Studios</span></a>
 
-           <!--
-           <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/dashboard">Home</a>
-           <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/movies">Movies</a>
-           <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/studios">Studios</a>
-           -->
+           
          </div>
         </div>
 
-        <!-- TOOLBAR START -->
-         <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 mb-2 p-2 bg-light border rounded">
+        <!--bootstrap navbar BEGIN -->
 
-            <form class="d-flex flex-grow-1 m-0" method="GET" action="/actor?svc=services.dbproc&func=get_actors">
-                <input type="hidden" name="svc" value="services.dbproc"> <!-- needed for query string -->
-                <input type="hidden" name="func" value="get_actors">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <div class="container-fluid">
+             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+               <span class="navbar-toggler-icon"></span>
+             </button>
 
-                <div class="input-group w-100">
-                    <span class="input-group-text">Search</span>
-                    <input type="text" id="searchInput" name="searchInput" class="form-control" placeholder="Actor Name * for Wildcard">
-                </div>
-                <div class="input-group w-100">
-                    <button  type="submit" class="btn btn-primary" id="searchButton">Go</button>
-                </div>
-            </form>
-
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addModal">➕
-                    <span class="d-none d-sm-inline">Add Actor</span></button>
-                <a href="/actor?svc=services.dbproc&func=get_actors" class="btn btn-secondary" id="resetview">↺
-                    <span class="d-none d-sm-inline">Reset</span></a>
+             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-0 mb-lg-0">
+                    <li class="nav-item">
+                        
+                        <form class="d-flex align-items-center" method="GET" action="/actor?svc=services.dbproc&func=get_actors">
+                            <input type="hidden" name="svc" value="services.dbproc">
+                            <input type="hidden" name="func" value="get_actors">
+                            
+                            <input id="searchInput" name="searchInput" 
+                                    placeholder="Search Actor * for Wildcard" 
+                                    type="search" class="form-control me-0">
+                            <button class="btn btn-primary me-2" type="submit" id="searchButton">Search</button>
+                        
+                        </form>
+                        
+                    </li>
+                    
+                    <li class="nav-item">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">➕
+                                <span class="d-none d-sm-inline">Add Actor</span></button>
+                            <a type="button" href="/actor?svc=services.dbproc&func=get_actors" class="btn btn-secondary" id="resetview">↺
+                            <span class="d-none d-sm-inline">Reset</span></a>    
+                        </div>
+                    </li>
+                    
+                </ul>
+             </div>
             </div>
+        </nav>
 
-        </div>
-        <!-- TOOLBAR END -->
-
-        <div class="actor-list">
-            <div class="actor-row-header">
-                <div><a>Actor Name ({{recordcount}})</a></div>
-                <div><a>Birth Year</a></div>
-                <div><span titla="Add New Actor" class="add-icon" data-bs-toggle="modal" data-bs-target="#addModal">➕</span></div>
-            </div>
-        
-            {% for datarow in data %}
-            <div class="actor-row" id="actor-{{datarow.id}}">
-                <div class="actor-name">{{datarow.name}}</div>
-                <div class="actor-year text-center">{{datarow.birthyear}}</div>
-                <div class="actions">
-                    <span title="Edit Current Record" class="edit-icon btnEdit" data-bs-toggle="modal" data-bs-target="#editModal"
+        <!--bootstrap navbar END -->
+        <!--bootstrap sticky table BEGIN -->
+        <div style="max-height:80%; overflow-y:auto;">
+            <table class="table table-hover table-responsive table-secondary table-striped table-hover table-bordered ">
+                <thead class="sticky-top table-dark">
+                    <tr>
+                        <th>Actor Name({{recordcount}})</th>
+                        <th>Birth Year</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tablebody">
+                    {% for datarow in data %}
+                     <tr class="table-row" id="actor-{{datarow.id}}">
+                        <td class="actor-name" style="width:50%" >{{datarow.name}}</td>
+                        <td class="actor-year" style="width:15%" >{{datarow.birthyear}}</td>
+                        <td class="actions" style="width:35%">
+                            <span title="Edit Current Record" class="edit-icon btnEdit" data-bs-toggle="modal" data-bs-target="#editModal"
                             data-actorid = "{{datarow.id}}"
                             data-actorname = "{{datarow.name}}"
                             data-birthyear = "{{datarow.birthyear}}"
                             onclick="openEditModal(this)"
                             >✏️</span>
-                        <span data-actorid = "{{datarow.id}}" id="btnDelete" title="Delete Current Record" class="delete-icon btnDelete">
+                            <span data-actorid = "{{datarow.id}}" title="Delete Current Record" class="delete-icon btnDelete">
                             🗑️
-                        </span>
-                </div>
-                </div>
-            {% endfor %}
+                            </span>
+                        </td>
+                     </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
         </div>
+        <!-- bootstrap sticky table end -->
 
         <div id="alertPlaceholder"></div>
         <div id="toastContainer" class="toast-container position-fixed bottom-0 end-0 p-3"></div>
@@ -144,15 +161,7 @@
           </div> <!--modal content-->
          </div> <!--modal dialog-->
         </div> <!--addModal container-->
-
-        <!-- TEST DATABLOCK 
-        <button class="btn btn-primary" id="btntestapi">Test API</button>
-        <ul>
-        {% for datarow in data %}
-            <li>{{ datarow.name }} - {{ datarow.birthyear }}</li>
-        {% endfor %}
-        </ul> 
-        -->
+       
 
     <script>
         function openEditModal(ele){
@@ -285,17 +294,17 @@
              //need to close the modal dialog box and reset the values
         }
         function addActorToGrid(actordata){
-            console.log(actordata);
-            console.log(actordata.name);
-            const row = document.createElement("div");
-            row.className = "actor-row";
+            
+            const row = document.createElement("tr");
+            row.className = "table-row";
             row.id = "actor-" + actordata["data"]["id"];
+            row.style = "width:50%";
 
 
             row.innerHTML = `
-                <div class="actor-name">${actordata["data"]["name"]}</div>
-                <div class="actor-year">${actordata["data"]["birthyear"]}</div>
-                <div class="actions">
+                <td class="actor-name">${actordata["data"]["name"]}</td>
+                <td class="actor-year">${actordata["data"]["birthyear"]}</td>
+                <td class="actions">
                    <span data-actorid="${actordata["data"]["id"]}" 
                          data-birthyear="${actordata["data"]["birthyear"]}"
                          data-actorname="${actordata["data"]["name"]}"
@@ -305,9 +314,9 @@
                       onclick="">✏️</span>
                    <span data-actorid="${actordata["data"]["id"]}"  class="delete-icon btnDelete"
                       >🗑️</span>
-                </div>
+                </td>
             `;
-            document.querySelector(".actor-list").appendChild(row);
+            document.querySelector("#tablebody").appendChild(row);
         }
 
         $(document).on("click",".btnDelete", async function() {
@@ -344,55 +353,14 @@
             }
             }); //onclick for dynamic buttons
         
-        /*
-        document.getElementById("btnDelete").onclick = async function(){
-             const elementid = "actor-" + this.dataset.actorid;
-             const myrow = document.getElementById(elementid)
-             
-             const response = await fetch("/api/actor?svc=api.actor&func=deleteActor",
-                {
-                    method:"POST",
-                    headers:{"Content-Type":"application/json"},
-                    body: JSON.stringify({actorid:this.dataset.actorid})
-                });
-                 
-                
-            const responsedata = await response.json();
-            if (response.ok) {
-                
-                myrow.remove();
-                if (responsedata.status == true) { sstatus = "success";  }
-                else { sstatus = "danger"; }
-                showAlert(responsedata.msg,sstatus);
-            }
-            else {
-                sstatus = "danger";
-                showAlert(reponsedata.msg,sstatus);
-            }
-        }
-        */
+        
         function deleteRow(irowid,ele) {
              const elementid = "actor-" + irowid.toString();
              const myrow = document.getElementById(elementid);
              myrow.remove();
 
         }
-        /*
-        document.getElementById("btntestapi").onclick = async function(){
-            const response = await fetch("/api/testapi?svc=api.apitest&func=api_test",
-                {
-                    method:"POST",
-                    headers:{"Content-Type":"application/json"},
-                    body : JSON.stringify({var1:"GOOFY",var2:"DONALD",var3:"MICKEY"})
-                }
-            );
-            const actordata = await response.json();
-
-            if (response.ok) {
-               alert(actordata.msg);
-            }
-        }
-        */
+        
     </script>
 
     
