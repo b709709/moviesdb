@@ -9,7 +9,10 @@
    
         <!--HEADER-->
         <div class="dash-header">
-            <h1>🎞️ My Movie Dashboard</h1>
+
+            <span class="d-none d-sm-inline"><h1>🎞️ My Movies</h1></span>
+            <span class="d-lg-none d-md-none d-sm-none"><h5>🎞️ My Movies</h5></span>
+
             <div class="dash-right dash-user" >ID:{{username}}
             <a id="btnlogout" href="/logout" class="btn btn-danger">Logout</a>
             </div>
@@ -27,7 +30,7 @@
          </div>
         </div>
    
-        <!-- TOOLBAR START -->
+        <!-- TOOLBAR START CONVERT THIS TO A NAVBAR TO HANDLE IT BETTER--> 
          <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 mb-2 p-2 bg-light border rounded">
 
             <form class="d-flex flex-grow-1 m-0" method="GET" action="/dashboard?svc=services.dbproc&func=get_mymovies">
@@ -53,15 +56,15 @@
         <!-- TOOLBAR END -->
 
         <div class="data-list">
-            <div class="data-row-header">
+            <div class="data-row-header row">
                 <div class="movie-poster emoji-static">🏞️</div>
                 <div><a>Movie Title ({{recordcount}})</a></div>
-                <div><a>Movie Year</a></div>
+                <div class="d-none d-sm-inline"><a>Movie Year</a></div>
                 <div><a>Media Types 👉</a></div>
-                <div><span title="Remove Movie"></span></div>
+                <div><span title="Remove Movie">Actions</span></div>
             </div>
         {% for datarow in data %}
-            <div class="data-row" id="user_movie-{{datarow.id}}">
+            <div class="data-row row" id="user_movie-{{datarow.id}}">
                 <div class="movie-poster">
                     {% if datarow.posterimage != '' %}
                         <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename=datarow.posterimage)}}"/></div>    
@@ -70,7 +73,7 @@
                     {%endif%}
                 </div>
                 <div class="movie-title movie-id">{{datarow.title}}</div>
-                <div class="user-id d-flex justify-content-center">{{datarow.year}}</div>
+                <div class="d-none d-sm-inline user-id d-flex justify-content-center">{{datarow.year}}</div>
                 <div class="mediatype d-flex justify-content-center">
 
                     {% if datarow.vhs != true %} 
