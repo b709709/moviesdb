@@ -209,3 +209,21 @@ body {background: #0C0C0C;
     padding-top: 0;
     padding-bottom: 0;
 }        
+
+td.movie-year, td.actions, td.movie-title{
+    vertical-align: middle;
+    xdisplay: flex;
+    xjustify-content: center;   /* center left ↔ right */
+    xalign-items: center;        /* center top ↔ bottom */
+}
+
+.xmy-table {
+    table-layout: fixed;
+    width: 100%;
+}
+.xmy-table th,
+.xmy-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

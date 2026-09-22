@@ -125,6 +125,7 @@ def linkUserMovie(session,request):
     data = request.json
     imovieid:int = data["movieid"]
     iuserid:int = session.get("userid")
+    
 
     print("DEBUG IN: linkUserMovie",imovieid,iuserid)
     conn = get_connection()
@@ -298,10 +299,11 @@ def addMovie(session,request):
     istudio = 1
     irowid = 0
     newrow = None
+    sposterimage:str = ""
 
     conn = get_connection();
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-    sql = cur.mogrify(f"INSERT INTO movie (title,year,studio_id) VALUES(%s,%s,%s) RETURNING *",(stitle,iyear,istudio))
+    sql = cur.mogrify(f"INSERT INTO movie (title,year,studio_id,posterimage) VALUES(%s,%s,%s,%s) RETURNING *",(stitle,iyear,istudio,sposterimage))
     #execute it
     #fetchone
     #obtain rowid

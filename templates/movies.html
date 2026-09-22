@@ -23,16 +23,60 @@
             🎭<span class="d-none d-sm-inline">Actors</span></a>
            <a class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" href="/studios?svc=services.dbproc&func=get_studios">
             🎬<span class="d-none d-sm-inline">Studios</span></a>
-           <a id="btnbatchload" class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" onclick="batchLoad()">Batch Load</a>
+           <!--<a id="btnbatchload" class="btn btn-primary btn-space me-2 mb-1 mb-sm-1 mb-md-0" onclick="batchLoad()">Batch Load</a>-->
            
          </div>
         </div>
 
+        <!-- bootstrap navbar BEGIN -->
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
+            <div class="container-fluid">
+             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+               <span class="navbar-toggler-icon"></span>
+             </button>
+
+             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-0 mb-lg-0">
+                    <li class="nav-item">
+                        
+                        <form class="d-flex align-items-center" method="GET" action="/dashboard?svc=services.dbproc&func=get_movies">
+                            <input type="hidden" name="svc" value="services.dbproc">
+                            <input type="hidden" name="func" value="get_movies">
+                            
+                            <input id="searchInput" name="searchInput" 
+                                    placeholder="Search Movies * for Wildcard" 
+                                    type="search" class="form-control me-0">
+                            <button class="btn btn-primary me-2" type="submit" id="searchButton">Search</button>
+                            
+                            <div class="d-flex form-check form-switch">
+                                <input class="form-check-input form-control" role="switch" type="checkbox" value="ownedno" name="hideOwned" id="hideOwned">
+                                <label class="form-check-label" for="hideOwned">Hide Owned</label>
+                            </div>
+                            
+                        </form>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item ">
+                        <div class="btn-group me-2">
+                            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">➕
+                                <span class="d-none d-sm-inline">Add Movie</span></button>
+                            <a type="button" href="/dashboard?svc=services.dbproc&func=get_movies" class="btn btn-secondary" id="resetview">↺
+                            <span class="d-none d-sm-inline">Reset</span></a>    
+                        </div>
+                    </li>
+                </ul>
+             </div>
+            </div>
+        </nav>
+        <!-- bootstrap navbar END -->
+
         <!-- TOOLBAR START -->
+         <!--
          <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 mb-2 p-2 bg-light border rounded">
 
             <form class="d-flex flex-grow-1 m-0" method="GET" action="/dashboard?svc=services.dbproc&func=get_movies">
-                <input type="hidden" name="svc" value="services.dbproc"> <!-- needed for query string -->
+                <input type="hidden" name="svc" value="services.dbproc"> 
                 <input type="hidden" name="func" value="get_movies">
 
                 <div class="input-group w-100">
@@ -61,55 +105,62 @@
             </div>
 
         </div>
+        -->
         <!-- TOOLBAR END -->
 
 
         <!-- put in place here the current record count this will need to be done as a template var -->
-           
-        <div class="data-list">
-            <div class="data-row-header">
-                <div class="movie-poster emoji-static">🏞️</div>
-                <div><span title="Sort By Game" href="/dashboard?sort=name">Title ({{recordcount}})</span></div>
-                <div><span title="Sort By Console" href="/dashboard?sort=console">Year</span></div>
-                <div class="actions-header">
-                    <span title="Add New Movie" class="add-icon" data-bs-toggle="modal" data-bs-target="#addModal">➕</span>
-                </div>
-            </div>
+        <!--movie-list-->
+    <!-- END OF MOVIE LIST DIV METHOD -->
 
-            
-            {% for movie in data %}
-               <div class="data-row" id="movie-{{movie.id}}">
-                   <div class="movie-poster">
-                     {% if movie.posterimage != '' %}
-                       <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename=movie.posterimage)}}"/></div>    
-                     {% else %}
-                       <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename='images/poster/noposter.png')}}"/></div>
-                     {%endif%}
-                   </div>
-                   <div class="movie-title ">
-                      {{movie.title}}
-                   </div>
-                   <div class="movie-year">{{movie.year}}</div>
-                   <div class="actions">
-                       <span data-movieid="{{movie.id}}" 
-                             data-movietitle ="{{movie.title}}"
-                             data-movieyear = "{{movie.year}}"
-                             onclick="openEditModal(this)"
-                             class="btn-edit edit-icon" data-bs-toggle="modal" data-bs-target="#editModal">✏️</span>
-                       <span data-movieid="{{movie.id}}" 
-                             class="delete-icon btn-delete">🗑️</span>
-                       {% if movie.user_has %}      
-                            <span class="btn-unlink delete-icon" data-movieid="{{movie.id}}">⛓️‍💥</span>
-                        {% else %}
-                            <span class="btn-link  delete-icon" data-movieid="{{movie.id}}">🔗</span>    
-                       {% endif %}
-            
-                   </div>
-               </div>
-            {% endfor %}
+     <!--bootstrap sticky table BEGIN -->
+        <div style="max-height:80%; overflow-y:auto;">
+            <table class="table table-hover table-responsive table-secondary table-striped table-hover table-bordered my-table">
+                <thead class="sticky-top table-light">
+                    <tr>
+                        <th style="width:10%">Poster</th>
+                        <th style="width:60%">Movie Title({{recordcount}})</th>
+                        <th style="width:10%">Year</th>
+                        <th style="width:20%">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tablebody">
+                    {% for datarow in data %}
+                     <tr class="table-row" id="movie-{{datarow.id}}">
+                        <td class="movie-poster" >
+                            <div class="movie-poster">
+                                {% if datarow.posterimage != '' and datarow.posterimage != None %}
+                                <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename=datarow.posterimage)}}"/></div>    
+                                {% else %}
+                                <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename='images/poster/noposter.png')}}"/></div>
+                                {%endif%}
+                            </div>
+                        </td>
+                        <td class="movie-title"  >{{datarow.title}}</td>
+                        <td class="movie-year"  >{{datarow.year}}</td>
+                        <td class="actions" >
+                            <span title="Edit Current Record" class="edit-icon btnEdit" data-bs-toggle="modal" data-bs-target="#editModal"
+                            data-movieid = "{{datarow.id}}"
+                            data-movietitle = "{{datarow.title}}"
+                            data-movieyear = "{{datarow.year}}"
+                            onclick="openEditModal(this)"
+                            >✏️</span>
+                            <span data-movieid = "{{datarow.id}}" title="Delete Current Record" class="btn-delete delete-icon btnDelete">
+                            🗑️
+                            </span>
+                            {% if datarow.user_has %}      
+                            <span class="btn-unlink delete-icon" data-movieid="{{datarow.id}}">⛓️‍💥</span>
+                            {% else %}
+                                <span class="btn-link  delete-icon" data-movieid="{{datarow.id}}">🔗</span>    
+                            {% endif %}
 
-        </div><!--movie-list-->
-
+                        </td>
+                     </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div>
+        <!-- bootstrap sticky table end -->
     
     <div id="addModal" class="modal fade" tab-index="-1">
        <div class="modal-dialog">
@@ -372,19 +423,20 @@
              function addMovieToGrid(movie){
                 console.log(movie);
                 console.log(movie["newrow"]["title"])
-                const row = document.createElement("div");
-                row.className = "data-row";
+                const row = document.createElement("tr");
+                row.className = "table-row";
                 row.id = "movie-" + movie["newrow"]["id"];
                 row.innerHTML = `
-                       <div class="movie-title">${movie["newrow"]["title"]}</div>
-                        <div class="movie-year">${movie["newrow"]["year"]}</div>
-                        <div class="actions">
+                       <td class="movie-poster">PP</td>
+                       <td class="movie-title">${movie["newrow"]["title"]}</td>
+                        <td class="movie-year">${movie["newrow"]["year"]}</td>
+                        <td class="actions">
                         <span  data-movieid=${movie["newrow"]["id"]} class="edit-icon btn-edit">✏️</span>
                         <span  data-movieid=${movie["newrow"]["id"]} class="delete-icon btn-delete">🗑️</span>
-                        </div>
+                        </td>
                 `;
                 //querySelector selects a single element, first element from the DOM careful!
-                document.querySelector(".data-list").appendChild(row);
+                document.querySelector("#tablebody").appendChild(row);
              }
 
               
