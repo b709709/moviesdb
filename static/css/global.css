@@ -83,7 +83,7 @@ background:#d0d0d0;
 }
 
 .game-name, .actor-name , .movie-title{
-  font-weight: bold;
+  xfont-weight: bold;
   
 }
 
@@ -217,13 +217,23 @@ td.movie-year, td.actions, td.movie-title{
     xalign-items: center;        /* center top ↔ bottom */
 }
 
-.xmy-table {
+.my-table {
     table-layout: fixed;
     width: 100%;
 }
-.xmy-table th,
-.xmy-table td {
+.my-table th,
+.my-table td {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    xtext-wrap-mode: wrap;
 }
+
+@media xscreen and (min-width: 200px) {
+  table td:nth-child(2) {
+    width:50%;
+    background-color:green;
+    
+  }
+}
+

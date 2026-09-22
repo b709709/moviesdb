@@ -115,19 +115,21 @@
 
      <!--bootstrap sticky table BEGIN -->
         <div style="max-height:80%; overflow-y:auto;">
-            <table class="table table-hover table-responsive table-secondary table-striped table-hover table-bordered my-table">
+            <table class="table table-hover table-responsive 
+                          table-secondary table-striped  
+                          table-bordered my-table">
                 <thead class="sticky-top table-light">
                     <tr>
-                        <th style="width:10%">Poster</th>
+                        <th class="d-none d-md-table-cell" style="width:10%">Poster</th>
                         <th style="width:60%">Movie Title({{recordcount}})</th>
-                        <th style="width:10%">Year</th>
+                        <th class="d-none d-md-table-cell" style="width:10%">Year</th>
                         <th style="width:20%">Action</th>
                     </tr>
                 </thead>
                 <tbody id="tablebody">
                     {% for datarow in data %}
                      <tr class="table-row" id="movie-{{datarow.id}}">
-                        <td class="movie-poster" >
+                        <td class="d-none d-md-table-cell movie-poster" >
                             <div class="movie-poster">
                                 {% if datarow.posterimage != '' and datarow.posterimage != None %}
                                 <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename=datarow.posterimage)}}"/></div>    
@@ -136,8 +138,8 @@
                                 {%endif%}
                             </div>
                         </td>
-                        <td class="movie-title"  >{{datarow.title}}</td>
-                        <td class="movie-year"  >{{datarow.year}}</td>
+                        <td class="movie-title"  >{{datarow.title}} <span class="d-md-none"> ({{datarow.year}})</span></td>
+                        <td class="d-none d-md-table-cell movie-year"  >{{datarow.year}}</td>
                         <td class="actions" >
                             <span title="Edit Current Record" class="edit-icon btnEdit" data-bs-toggle="modal" data-bs-target="#editModal"
                             data-movieid = "{{datarow.id}}"
@@ -375,6 +377,8 @@
             //movie-title movie-year
             gridrow.querySelector(".movie-title").innerText = stitle;
             gridrow.querySelector(".movie-year").innerText = iyear;
+            gridrow.querySelector(".btnEdit").dataset.movietitle = stitle;
+            gridrow.querySelector(".btnEdit").dataset.movieyear = iyear;
             modal.hide();
 
             //TO BE DONE!!!!!
@@ -431,8 +435,18 @@
                        <td class="movie-title">${movie["newrow"]["title"]}</td>
                         <td class="movie-year">${movie["newrow"]["year"]}</td>
                         <td class="actions">
-                        <span  data-movieid=${movie["newrow"]["id"]} class="edit-icon btn-edit">✏️</span>
-                        <span  data-movieid=${movie["newrow"]["id"]} class="delete-icon btn-delete">🗑️</span>
+                          <span title="Edit Current Record"
+                                class="edit-icon btnEdit"
+                                data-bs-toggle="modal" data-bs-target="#editModal"
+                                data-movieid="${movie['newrow']['id']}"
+                                data-movietitle="${movie['newrow']['title']}"
+                                data-movieyear="${movie['newrow']['year']}"
+                                onclick="openEditModal(this)">✏️</span>
+                          <span title="Delete Current Record"
+                                data-movieid="${movie['newrow']['id']}" 
+                                class="btn-delete delete-icon btnDelete">🗑️</span>
+                          <span class="btn-link delete-icon"
+                                data-movieid="${movie['newrow']['id']}">🔗</span>
                         </td>
                 `;
                 //querySelector selects a single element, first element from the DOM careful!
