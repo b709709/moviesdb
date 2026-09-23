@@ -71,45 +71,7 @@
         </nav>
         <!-- bootstrap navbar END -->
 
-        <!-- TOOLBAR START -->
-         <!--
-         <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 mb-2 p-2 bg-light border rounded">
 
-            <form class="d-flex flex-grow-1 m-0" method="GET" action="/dashboard?svc=services.dbproc&func=get_movies">
-                <input type="hidden" name="svc" value="services.dbproc"> 
-                <input type="hidden" name="func" value="get_movies">
-
-                <div class="input-group w-100">
-                    <span class="input-group-text">Search</span>
-                    <input type="text" id="searchInput" name="searchInput" class="form-control" placeholder="Movie Name * for Wildcard">
-                </div>
-                <div class="input-group w-100">
-                    <button  type="submit" class="btn btn-primary" id="searchButton">Go</button>
-                    <div class="mb-1 p-1">
-                        <div class="form-check form-switch">
-                            <input class="form-check-input" role="switch" type="checkbox" value="ownedno" name="hideOwned" id="hideOwned">
-                            <label class="form-check-label" for="hideOwned">
-                                Hide Owned
-                            </label>
-                        </div>
-                    </div>
-                </div>
-                
-            </form>
-
-            <div class="d-flex gap-2">
-                <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addModal">➕
-                    <span class="d-none d-sm-inline">Add Movie</span></button>
-                <a href="/dashboard?svc=services.dbproc&func=get_movies" class="btn btn-secondary" id="resetview">↺
-                    <span class="d-none d-sm-inline">Reset</span></a>
-            </div>
-
-        </div>
-        -->
-        <!-- TOOLBAR END -->
-
-
-        <!-- put in place here the current record count this will need to be done as a template var -->
         <!--movie-list-->
     <!-- END OF MOVIE LIST DIV METHOD -->
 
@@ -243,7 +205,7 @@
       //UNLINK THE MOVIE FROM THE USER
       $(document).on("click",".btn-unlink",async function(){
         const movieid = this.dataset.movieid;
-        console.log(movieid);
+        //console.log(movieid);
 
         const response = await fetch("/api/movie?svc=api.movie&func=deleteLinkNoUser", {
                         method:"POST",
@@ -254,7 +216,7 @@
                      responsedata = await response.json();
                      console.log("respondata received");
                      if (response.ok && responsedata.status == true){
-                        console.log("response is ok and respondata is true");
+                        //console.log("response is ok and respondata is true");
                         this.classList.remove("btn-unlink");
                         this.classList.add("btn-link");
                         this.innerText = "🔗";
@@ -298,7 +260,7 @@
                 body:JSON.stringify({"movieid":movieid})
             });
             const responsedata = await response.json();
-            console.log(responsedata);
+            //console.log(responsedata);
             removeRow(movieid);
         })
 
