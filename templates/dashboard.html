@@ -154,7 +154,7 @@
 
                           <div class="row infoTop p-3">
                             <div id="infomediaPoster" class="col"></div>
-                            <div id="infomediaTitle" class="col"></div>
+                            <div id="infomediaTitle" class="col"><span id="moviesummary"></span></div>
                           </div>
                           
                           <div class="row ms-1">
@@ -222,6 +222,7 @@
              /* HANDLING OF THE ROW SELECT TO DO ACTIONS IN MOBILE AND MAYBE DESKTOP */
              /* ONLY THE MEDIA TYPES SHOULD AND MOVIE TITLE SHOULD BE SHOWN IN THE GRID */
              /* ON MOBILE */
+             
              $(document).on("click",".table-row",function(){
                   const sid = this.id;
                   let smovietitle = "";
@@ -288,10 +289,37 @@
                const responsedata = await response.json();
                if (response.ok && responsedata.status == true)
                {
-                 targetcol = this.closest(".table-row").querySelector(".mediatype"); //debug: was .data-row
+                 //TBD DUPLICATE THE SAME STUFF HERE YOU DID WITH THE ADD MEDIA RESPONSE
+                 
+                   let targetrow = document.getElementById("user_movie-" + movieid);
+                   let targetcol = targetrow.querySelector(".mediatype");
+                   let rowbutton = targetrow.querySelector(`.actions [data-type="` + mediatype + `"]`);
+
+                   console.log(rowbutton);
+                   let infobox = this.closest("#infomediaHave"); //for the dialog box
+                   let targetinfobox = document.getElementById("infomediaAvail");
+                                  
+                 //INFO BOX MOVE TESTING
+                   if (infobox != null ) {
+                       this.classList.remove("delbtnMedia");
+                       this.classList.add("btnMedia");
+                       targetinfobox.appendChild(this);
+                   }
+                 //ROW BUTTON MOVE TESTING
+                   if (rowbutton != null){
+                    rowbutton.classList.remove("delbtnMedia");
+                    rowbutton.classList.add("btnMedia");
+                    targetcol.appendChild(rowbutton);
+                   }
+                 /*
+                 let targetrow = document.getElementById("user_movie-" + movieid);
+                 let targetcol = targetrow.querySelector(".mediatype");
+
+                 //targetcol = this.closest(".table-row").querySelector(".mediatype"); //debug: was .data-row
                  this.classList.remove("delbtnMedia");
                  this.classList.add("btnMedia");
                  targetcol.appendChild(this);
+                 */
                }
                else {
                  //failed to remove from the database message  
@@ -316,16 +344,43 @@
                if (response.ok && responsedata.status == true )
                {
                 //TBD find the table row where the id matches the movieid not closest, and then do the queryselector for .actions
+
                 //TBD also in the dialog if "this" has the parent infomediaAvail if not null then find the .actions in the dialog and do the
                 //same below, so the below needs the main stuff in either case, and then an IF to see if the parent of "this" is infomediaAvail
                 //this will determine content and let us know if the dialog box also needs an update.
-                
-                 targetcol = this.closest(".table-row").querySelector(".actions"); //debug was .data-row
-                 //targetcol = this.querySelector(".actions");
+
+                 let targetrow = document.getElementById("user_movie-" + movieid);
+                 let targetcol = targetrow.querySelector(".actions");
+                 let rowbutton = targetrow.querySelector(`.mediatype [data-type="` + mediatype + `"]`);
+
+                 let infobox = this.closest("#infomediaAvail"); //for the dialog box
+                 let targetinfobox = document.getElementById("infomediaHave");
+                 //targetcol = this.closest(".table-row").querySelector(".actions"); //debug was .data-row
+                 
+                 
+                 //INFO BOX MOVE TESTING
+                 if (infobox != null ) {
+                    this.classList.remove("btnMedia");
+                    this.classList.add("delbtnMedia");
+                    targetinfobox.appendChild(this);
+                    
+                 }
+                 //ROW BUTTON MOVE TESTING
+                 if (rowbutton != null){
+                  rowbutton.classList.remove("btnMedia");
+                  rowbutton.classList.add("delbtnMedia");
+                  targetcol.appendChild(rowbutton);
+                 }
+                 
+                 /* ORIGINAL BEFORE THE DIALOG BOX 
                  this.classList.remove("btnMedia");
                  this.classList.add("delbtnMedia");
                  targetcol.appendChild(this);
+                 */
 
+                 
+                                 
+                 
                  
                 //rotate360(this,1000);
                 //move this type to the right column and remove it from this one.

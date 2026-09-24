@@ -45,7 +45,7 @@ def get_mymovies(session,request):
                     ON id = user_movie.movie_id 
             WHERE user_movie.user_id = 1"""
 
-            sql = cur.mogrify(f"SELECT movie.id, movie.title, movie.year, movie.posterimage, " + 
+            sql = cur.mogrify(f"SELECT movie.id, movie.title, movie.year, movie.posterimage, movie.summary, " + 
                                      f"user_movie.user_id, user_movie.movie_id, user_movie.dvd, user_movie.bluray, user_movie.digital, user_movie.vhs FROM user_movie " + 
                                      f" JOIN movie ON movie.id = user_movie.movie_id " + 
                                      f" WHERE user_movie.user_id = %s " + 
