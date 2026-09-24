@@ -31,93 +31,161 @@
         </div>
    
         <!-- TOOLBAR START CONVERT THIS TO A NAVBAR TO HANDLE IT BETTER--> 
-         <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-2 mb-2 p-2 bg-light border rounded">
-
-            <form class="d-flex flex-grow-1 m-0" method="GET" action="/dashboard?svc=services.dbproc&func=get_mymovies">
-                <input type="hidden" name="svc" value="services.dbproc"> <!-- needed for query string -->
-                <input type="hidden" name="func" value="get_mymovies">
-
-                <div class="input-group w-100">
-                    <span class="input-group-text">Search</span>
-                    <input type="text" id="searchInput" name="searchInput" class="form-control" placeholder="Movie Name * for Wildcard">
-                </div>
-                <div class="input-group w-100">
-                    <button  type="submit" class="btn btn-primary" id="searchButton">Go</button>
-                </div>
-            </form>
-
-            <div class="d-flex gap-2">
-                <!--<button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#addModal">➕ Add Movie</button>-->
-                <a href="/dashboard?svc=services.dbproc&func=get_mymovies" class="btn btn-secondary" id="resetview">↺
-                    <span class="d-none d-sm-inline">Reset</span></a>
-            </div>
-
-        </div>
+    
         <!-- TOOLBAR END -->
+        <!-- BOOTSTRAP NAVBAR REPLACEMENT BEGIN -->
+        <nav class="navbar navbar-expand-md navbar-light bg-light">
+            <div class="container-fluid">
+             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+               <span class="navbar-toggler-icon"></span>
+             </button>
 
-        <div class="data-list">
-            <div class="data-row-header row">
-                <div class="movie-poster emoji-static">🏞️</div>
-                <div><a>Movie Title ({{recordcount}})</a></div>
-                <div class="d-none d-sm-inline"><a>Movie Year</a></div>
-                <div><a>Media Types 👉</a></div>
-                <div><span title="Remove Movie">Actions</span></div>
+             <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-0 mb-lg-0">
+                    <li class="nav-item">
+                        
+                        <form class="d-flex align-items-center" method="GET" action="/dashboard?svc=services.dbproc&func=get_mymovies">
+                            <input type="hidden" name="svc" value="services.dbproc">
+                            <input type="hidden" name="func" value="get_mymovies">
+                            
+                            <input id="searchInput" name="searchInput" 
+                                    placeholder="Search My Movies * for Wildcard" 
+                                    type="search" class="form-control me-0">
+                            <button class="btn btn-primary me-2" type="submit" id="searchButton">Search</button>
+                                                   
+                        </form>
+                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="nav-item ">
+                        <div class="btn-group me-2">
+                            <a type="button" href="/dashboard?svc=services.dbproc&func=get_mymovies" class="btn btn-secondary" id="resetview">↺
+                            <span class="d-none d-sm-inline">Reset</span></a>    
+                        </div>
+                    </li>
+                </ul>
+             </div>
             </div>
-        {% for datarow in data %}
-            <div class="data-row row" id="user_movie-{{datarow.id}}">
-                <div class="movie-poster">
-                    {% if datarow.posterimage != '' %}
-                        <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename=datarow.posterimage)}}"/></div>    
-                    {% else %}
-                        <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename='images/poster/noposter.png')}}"/></div>
-                    {%endif%}
-                </div>
-                <div class="movie-title movie-id">{{datarow.title}}</div>
-                <div class="d-none d-sm-inline user-id d-flex justify-content-center">{{datarow.year}}</div>
-                <div class="mediatype d-flex justify-content-center">
+        </nav>
+        <!-- BOOTSTRAP NAVBAR REPLACEMENT END -->
 
-                    {% if datarow.vhs != true %} 
-                      <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="vhs" title="Add VHS Version">📼</span>
-                    {% endif %}  
-                    {% if datarow.dvd != true %}
-                      <span   data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="dvd" title="Add DVD Version">📀</span>
-                    {% endif %}
-                    {% if datarow.bluray != true %}
-                      <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="bluray" title="Add BLURAY Version">🧿</span>
-                    {% endif %}
-                    {% if datarow.digital != true %}
-                      <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="digital" title="Add DIGITAL Version">💾</span>
-                    {% endif %}
-
-                </div>
-                <div class="actions">
-                        <span id="btndelete" data-userid = "{{datarow.user_id}}" 
+        <!-- BOOTSTRAP TABLES REPLACEMENT OF THE DIV WITH TABLES INSTEAD BEGIN -->
+        <div style="max-height:80%; overflow-y:auto;">
+            <table class="table table-hover table-responsive 
+                          table-secondary table-striped  
+                          table-bordered my-table">
+                <thead class="sticky-top table-light">
+                    <tr>
+                        <th class="d-none d-md-table-cell" style="width:10%">Poster</th>
+                        <th style="width:40%">Movie Title({{recordcount}})</th>
+                        <th class="d-none d-md-table-cell" style="width:10%">Year</th>
+                        <th class="d-none d-md-table-cell width:20%">Media</th>
+                        <th style="width:20%">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tablebody">
+                    {% for datarow in data %}
+                    <tr class="table-row" id="user_movie-{{datarow.id}}">
+                      <td class="d-none d-md-table-cell movie-poster">
+                        <div class="movie-poster">
+                                {% if datarow.posterimage != '' and datarow.posterimage != None %}
+                                <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename=datarow.posterimage)}}"/></div>    
+                                {% else %}
+                                <div class="poster-wrapper"><img class='posterthumb' src="{{url_for('static',filename='images/poster/noposter.png')}}"/></div>
+                                {%endif%}
+                        </div>
+                      </td> <!--movie poster column hidden when smaller -->
+                      <td class="movie-title">
+                            {{datarow.title}} <span class="d-md-none"> ({{datarow.year}})</span>
+                      </td> <!--movie title column-->
+                      <td class="d-none d-md-table-cell movie-year">
+                            {{datarow.year}}
+                      </td>
+                      <td class="d-none d-md-table-cell mediatype xd-flex xjustify-content-center">
+                        {% if datarow.vhs != true %} 
+                          <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="vhs" title="Add VHS Version">📼</span>
+                        {% endif %}  
+                        {% if datarow.dvd != true %}
+                          <span   data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="dvd" title="Add DVD Version">📀</span>
+                        {% endif %}
+                        {% if datarow.bluray != true %}
+                          <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="bluray" title="Add BLURAY Version">🧿</span>
+                        {% endif %}
+                        {% if datarow.digital != true %}
+                          <span  data-movieid = "{{datarow.movie_id}}" class="emoji-icon btnMedia" data-type="digital" title="Add DIGITAL Version">💾</span>
+                        {% endif %}
+                      </td> <!-- media type selection column -->
+                      <td class="actions">
+                          <span id="btndelete" data-userid = "{{datarow.user_id}}" 
                               data-movieid = "{{datarow.movie_id}}"
                               title="Delete Current Record" class="delete-icon btnDelete">
                             🗑️
-                        </span>
-                        <!--<span onclick="" data-userid = "{{datarow.user_id}}" data-movieid="{{datarow.movie_id}}" class="emoji-icon btnPrompt">PP</span>-->
+                          </span>
+                          {% if datarow.vhs == true %}
+                            <span  data-movieid = "{{datarow.movie_id}}" data-type="vhs" class="emoji-icon delbtnMedia" title="VHS Version">📼</span>
+                          {% endif %}
+                          {% if datarow.dvd == true %}
+                            <span  data-movieid = "{{datarow.movie_id}}" data-type="dvd" class="emoji-icon delbtnMedia" title="DVD Version">📀</span>
+                          {% endif %}
+                          {% if datarow.bluray == true %}
+                            <span  data-movieid = "{{datarow.movie_id}}" data-type="bluray" class="emoji-icon delbtnMedia" title="BLURAY Version">🧿</span>
+                          {% endif %}
+                          {%if datarow.digital == true %}
+                            <span  data-movieid = "{{datarow.movie_id}}" data-type="digital" class="emoji-icon delbtnMedia" title="DIGITAL Version">💾</span>
+                          {%endif%}
+                      </td> <!-- actions on the my movie list record -->
+                    </tr>
+                    {%endfor%}
+                </tbody>
+            </table>
+        </div> <!-- full datagrid listing replacement with tables -->
+       
+        <!-- BOOTSTRAP TABLES REPLACEMENT OF THE DIV WITH TABLES INSTEAD END -->
+        <!-- MODAL INFO DIALOG BOX BEGIN -->
+         <div id="modalInfoBox" class="modal fade" tab-index="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                   <div class="modal-header">
+                      <h2 id="infoHeader">Movie Information</h2>
+                      <button class="btn-close" type="button" data-bs-dismiss="modal"></button>
+                   </div>
+                   <div class="modal-body">
+                     <div id="infoData" class="row">
 
-                        {% if datarow.vhs == true %}
-                        <span  data-movieid = "{{datarow.movie_id}}" data-type="vhs" class="emoji-icon delbtnMedia" title="VHS Version">📼</span>
-                        {% endif %}
-                        {% if datarow.dvd == true %}
-                        <span  data-movieid = "{{datarow.movie_id}}" data-type="dvd" class="emoji-icon delbtnMedia" title="DVD Version">📀</span>
-                        {% endif %}
-                        {% if datarow.bluray == true %}
-                        <span  data-movieid = "{{datarow.movie_id}}" data-type="bluray" class="emoji-icon delbtnMedia" title="BLURAY Version">🧿</span>
-                        {% endif %}
-                        {%if datarow.digital == true %}
-                        <span  data-movieid = "{{datarow.movie_id}}" data-type="digital" class="emoji-icon delbtnMedia" title="DIGITAL Version">💾</span>
-                        {%endif%}
-                        
+                          <div class="row infoTop p-3">
+                            <div id="infomediaPoster" class="col"></div>
+                            <div id="infomediaTitle" class="col"></div>
+                          </div>
+                          
+                          <div class="row ms-1">
+                            <table class="table table-dark table-bordered w-100">
+                                <thead>
+                                    <th>Media Available</th>
+                                    <th>Media In Collection</th>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td id="infomediaAvail"></td>
+                                        <td id="infomediaHave"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                          </div>
+
+                     </div>
+                   </div>
+                   <div class="modal-footer">
+
+                   </div>
                 </div>
             </div>
-        {% endfor %}
-        </div>
+         </div>
+        <!-- MODAL INFO DIALOG BOX END -->
+
 
         <!-- begin script for btnMedia functions for adding media types -->
         <script>
+            /*
             function rotate360(element, duration) {
                 if (!(element instanceof HTMLElement)) {
                     console.error("Invalid element provided.");
@@ -134,11 +202,11 @@
                     if (!start) start = timestamp;
                     const elapsed = timestamp - start;
 
-                    //console.log("animate function" + element.classList);
-                    // Calculate rotation progress (0 to 1)
+                    
+                    
                     const progress = Math.min(elapsed / duration, 1);
 
-                    // Apply rotation
+                    
                     const degrees = progress * 360;
                     element.style.transform = `rotate(${degrees}deg)`;
 
@@ -149,8 +217,65 @@
 
                 requestAnimationFrame(animate);
             }
+            */
+             /* NEW SEGMENT */
+             /* HANDLING OF THE ROW SELECT TO DO ACTIONS IN MOBILE AND MAYBE DESKTOP */
+             /* ONLY THE MEDIA TYPES SHOULD AND MOVIE TITLE SHOULD BE SHOWN IN THE GRID */
+             /* ON MOBILE */
+             $(document).on("click",".table-row",function(){
+                  const sid = this.id;
+                  let smovietitle = "";
+                  let smediahtml = "";
+                  let sactionhtml = "";
+                  let sposterhtml = "";
 
-             $(document).on("click",".delbtnMedia",async function(){
+                  const modalEl = document.getElementById("modalInfoBox");
+                  var modal = new bootstrap.Modal(modalEl);
+                  modal.show();
+
+                  const eleHeader = document.getElementById("infoHeader");
+                  const eleData = document.getElementById("infoData");
+                  const eleInfoAvail = document.getElementById("infomediaAvail");
+                  const eleInfoHave = document.getElementById("infomediaHave");
+                  const eleInfoPoster = document.getElementById("infomediaPoster");
+                  const eleInfoTitle = document.getElementById("infomediaTitle");
+
+                  smovietitle = this.querySelector(".movie-title").innerText;
+
+                  smediahtml = this.querySelector(".mediatype").innerHTML;
+                  sactionhtml = this.querySelector(".actions").innerHTML;
+                  sposterhtml = this.querySelector("div.poster-wrapper").innerHTML;
+
+                  eleInfoTitle.innerText = smovietitle;
+                  eleInfoAvail.innerHTML = smediahtml;
+                  eleInfoHave.innerHTML = sactionhtml;
+                  eleInfoPoster.innerHTML = sposterhtml;
+                  eleInfoPoster.querySelector(".posterthumb").classList.remove("posterthumb");
+                  //eleInfoHave.querySelector("#btndelete").hide();
+                  $("#infomediaHave #btndelete").hide()
+
+                  //eleHeader.innerText = "Information for: " + smovietitle;
+                  /*
+                  eleData.innerHTML = "<span>Movie:" + smovietitle + "</span>" +
+                                      "<div class='d-flex'>" + smediahtml + "</div>" +
+                                      "<div class='d-flex'>" + sactionhtml + "</div>" +
+                                      "<div>" + sposterhtml + "</div>";
+
+                   */                
+                  //const modal = bootstrap.Modal.getInstance(modalEl);
+                  
+                  //find the posterimage
+                  //find the media type controls
+                  //find the action column information
+                  //bring up the new modal INFO box to show the image, extra information on media types and maybe text/actors/studio info
+                  console.log(sid);
+             });
+
+             $(document).on("click",".delbtnMedia",async function(e){
+
+               e.stopPropagation(); 
+               e.preventDefault();
+
                const mediatype = this.dataset.type;
                const movieid = this.dataset.movieid;
 
@@ -163,7 +288,7 @@
                const responsedata = await response.json();
                if (response.ok && responsedata.status == true)
                {
-                 targetcol = this.closest(".data-row").querySelector(".mediatype");
+                 targetcol = this.closest(".table-row").querySelector(".mediatype"); //debug: was .data-row
                  this.classList.remove("delbtnMedia");
                  this.classList.add("btnMedia");
                  targetcol.appendChild(this);
@@ -174,7 +299,10 @@
              });
 
              //ADDING A MEDIA TYPE
-             $(document).on("click",".btnMedia",async function(){
+             $(document).on("click",".btnMedia",async function(e){
+               e.stopPropagation(); 
+               e.preventDefault();
+
                const mediatype = this.dataset.type;
                const movieid = this.dataset.movieid;
 
@@ -187,14 +315,19 @@
                const responsedata = await response.json();
                if (response.ok && responsedata.status == true )
                {
-                 targetcol = this.closest(".data-row").querySelector(".actions");
+                //TBD find the table row where the id matches the movieid not closest, and then do the queryselector for .actions
+                //TBD also in the dialog if "this" has the parent infomediaAvail if not null then find the .actions in the dialog and do the
+                //same below, so the below needs the main stuff in either case, and then an IF to see if the parent of "this" is infomediaAvail
+                //this will determine content and let us know if the dialog box also needs an update.
+                
+                 targetcol = this.closest(".table-row").querySelector(".actions"); //debug was .data-row
                  //targetcol = this.querySelector(".actions");
                  this.classList.remove("btnMedia");
                  this.classList.add("delbtnMedia");
                  targetcol.appendChild(this);
 
                  
-                 rotate360(this,1000);
+                //rotate360(this,1000);
                 //move this type to the right column and remove it from this one.
                }
                else {
@@ -217,7 +350,10 @@
                  });
                  
 
-                 $(document).on("click",".btnDelete",async function(){
+                 $(document).on("click",".btnDelete",async function(e){
+                     e.stopPropagation(); 
+                     e.preventDefault();
+
                      const movieid = this.dataset.movieid;
                      const userid = this.dataset.userid;
 

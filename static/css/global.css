@@ -92,7 +92,8 @@ background:#d0d0d0;
 }
 
 .actions,
-.actions-header {
+.actions-header,
+.mediatype {
     text-align: center;
 }
 
@@ -188,6 +189,10 @@ div.movie-year, div.actions {
     transform: scale(4) translateX(10px);     /* enlarge the image */
     z-index: 999;            /* bring it to the front */
 }
+#infomediaPoster .posterthumb {
+   width:100px;
+   height:150px;
+}
 
 div.movie-poster {
   width:45px;
@@ -206,7 +211,7 @@ div.movie-poster {
     padding-bottom: 0;
 }        
 
-td.movie-year, td.actions, td.movie-title{
+td.movie-year, td.actions, td.movie-title, td.mediatype{
     vertical-align: middle;
     xdisplay: flex;
     xjustify-content: center;   /* center left ↔ right */
