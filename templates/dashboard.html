@@ -181,7 +181,12 @@
             </div>
          </div>
         <!-- MODAL INFO DIALOG BOX END -->
-
+         
+        {% if data|length == 0 %} 
+        <div class="alert alert-primary" role="alert">
+          Go to the movies list to add to your collection
+        </div>
+        {%endif%}
 
         <!-- begin script for btnMedia functions for adding media types -->
         <script>
