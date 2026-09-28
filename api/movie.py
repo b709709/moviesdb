@@ -127,7 +127,7 @@ def linkUserMovie(session,request):
     iuserid:int = session.get("userid")
     
 
-    print("DEBUG IN: linkUserMovie",imovieid,iuserid)
+    #print("DEBUG IN: linkUserMovie",imovieid,iuserid)
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     sql = cur.mogrify(f"INSERT INTO user_movie (user_id,movie_id) VALUES(%s,%s)",(iuserid,imovieid))
@@ -137,7 +137,7 @@ def linkUserMovie(session,request):
         conn.commit()
         isok = True
         smsg = "Successfully Added the movie to your collection"
-        print("DEBUG: PASS1")
+        #print("DEBUG: PASS1")
     except psycopg2.Error as e:
         conn.rollback()
         isok = False
@@ -165,7 +165,7 @@ def deleteLinkNoUser(session,request):
     imovieid:int = data["movieid"]
     iuserid:int = session.get("userid")
 
-    print("DEBUG IN: deleteLinkNoUser",imovieid,iuserid)
+    #print("DEBUG IN: deleteLinkNoUser",imovieid,iuserid)
 
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -198,14 +198,14 @@ def deleteLink(session,request):
     imovieid:int = data["movieid"]
     iuserid:int = data["userid"]
 
-    print("DEBUG: in the deleteLink function",imovieid,iuserid)
+    #print("DEBUG: in the deleteLink function",imovieid,iuserid)
 
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
     sql = cur.mogrify(f"DELETE FROM user_movie WHERE user_movie.user_id = %s AND user_movie.movie_id = %s",(iuserid,imovieid))
 
-    print("DEBUG: QUERY STATEMENT",sql)
+    #print("DEBUG: QUERY STATEMENT",sql)
     
     try:
         cur.execute(sql)
@@ -231,7 +231,7 @@ def deleteMovie(session,request):
     smsgs = ""
     data = request.json
     irowid = data["movieid"]
-    print("DEBUG IN movie.py deleteMovie FUNCTION",irowid)
+    #print("DEBUG IN movie.py deleteMovie FUNCTION",irowid)
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     sql = cur.mogrify(f"DELETE FROM movie WHERE id = {irowid} ")
@@ -268,7 +268,7 @@ def saveEdit(session,request):
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
     sql = cur.mogrify(f"UPDATE movie set title='{stitle}', year={iyear} WHERE id = {id} RETURNING *")
 
-    print("DEBUG IN MOVIE.PY UPDATE MOVIE RECORD:",sql)
+    #print("DEBUG IN MOVIE.PY UPDATE MOVIE RECORD:",sql)
 
     try:
         cur.execute(sql)
@@ -327,7 +327,7 @@ def addMovie(session,request):
         cur.close()
         conn.close()
 
-    print("DEBUG: IN THE API.MOVIE addMovie FUNCTION",stitle,iyear)
+    #print("DEBUG: IN THE API.MOVIE addMovie FUNCTION",stitle,iyear)
 
     return {
         "status":isok,

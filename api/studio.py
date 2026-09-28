@@ -11,7 +11,7 @@ def delStudio(session,request):
 
     studioid:int = 0
     studioid = data["studioid"]
-    print("DEBUG IN delStudio:",studioid)
+    #print("DEBUG IN delStudio:",studioid)
 
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -97,14 +97,14 @@ def addNew(session,request):
     studioid:int = 0
     snewstudio:str = ""
     data = request.json
-    print("CLIENT DATA SENT IN:",data)
+    #print("CLIENT DATA SENT IN:",data)
 
     try:
         snewstudio = data["studioname"]
     except:
         snewstudio = ""
 
-    print("DEBUG ADD NEW STUDIO:",snewstudio)
+    #print("DEBUG ADD NEW STUDIO:",snewstudio)
     if snewstudio == "" or not snewstudio:
         isok = False
         smsg = "Studio Name must not be blank, please retry."
@@ -136,7 +136,7 @@ def addNew(session,request):
             cur.close()
             conn.close()
 
-    print("DEBUG RESULTS OF ADD NEW STUDIO:",studioid)            
+    #print("DEBUG RESULTS OF ADD NEW STUDIO:",studioid)            
         
     return {
         "status":isok,

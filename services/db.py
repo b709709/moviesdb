@@ -34,7 +34,7 @@ def get_user(username,password,action):
            dbhashed = rows[0].get("password").encode("utf-8")
         
 
-        print("HOW MANY ROWS RETURNED FROM THE LOGIN CHECK:", len(rows),rows[0].get("username"))
+        #print("HOW MANY ROWS RETURNED FROM THE LOGIN CHECK:", len(rows),rows[0].get("username"))
         if len(rows) == 1 and bcrypt.checkpw(entered, dbhashed): #rows[0].get("password") == password:
             sessionid = rows[0].get("id")
             return sessionid,True,"User found goto dashboard."
@@ -65,7 +65,7 @@ def get_user(username,password,action):
             returnmsg = "User already exists, please retry."
         else:
             #create record in db
-            print("create new user")
+            #print("create new user")
             conn = get_connection()
             cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
             sql = cur.mogrify(f"INSERT INTO users (username,password) VALUES(%s,%s) RETURNING id",(username,strhash))

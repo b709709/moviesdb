@@ -51,7 +51,7 @@ def get_mymovies(session,request):
                                      f" WHERE user_movie.user_id = %s " + 
                                      f" AND movie.title ILIKE %s "
                                      f" ORDER BY movie.title",(user_id,searchvalue))
-            print("DEBUG SQL QUERY FOR USER MOVIE",sql)
+            #print("DEBUG SQL QUERY FOR USER MOVIE",sql)
             cur.execute(sql)
             rows = cur.fetchall()
         except psycopg2.Error as e:
@@ -99,7 +99,7 @@ def get_movies(session,request):
     else:
        bshow = False
 
-    print("DEBUG: services.dbproc.get_movies hide owned value:",shideOwned,bshow)
+    #print("DEBUG: services.dbproc.get_movies hide owned value:",shideOwned,bshow)
 
     conn = get_connection()
     cur = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
@@ -136,7 +136,7 @@ def get_movies(session,request):
        sql = cur.mogrify(f"SELECT *, EXISTS(SELECT 1 FROM user_movie um WHERE um.movie_id = movie.id AND um.user_id = %s) as user_has " + 
                          f" FROM movie WHERE title ILIKE %s ORDER BY title",(user_id,searchvalue))
 
-    print("DEBUG GET_MOVIES DATA",searchvalue,user_id)
+    #print("DEBUG GET_MOVIES DATA",searchvalue,user_id)
 
     #THIS IS THE TEST QUERY TO MAKE SURE IT WILL BUILD THE HAS_USER FIELD NEED TO MERGE THIS INTO
     #THE ABOVE 2 SQL POSSIBILITIES
@@ -169,7 +169,7 @@ def get_movies(session,request):
     }
 
 def get_studios(session,request):
-    print("in the dbproc.py get_studios method",session["username"],request.args)
+    #print("in the dbproc.py get_studios method",session["username"],request.args)
     rows = []
     json = jsonify("")
 
@@ -196,7 +196,7 @@ def get_studios(session,request):
 
 
 def get_actors(session,request):
-    print ("in the dbproc.py get_actors method",session["username"], request.args)
+    #print ("in the dbproc.py get_actors method",session["username"], request.args)
     rows = []
     json = jsonify("")
     searchvalue:str = ""
@@ -212,7 +212,7 @@ def get_actors(session,request):
     if searchvalue == "" or not searchvalue:
         sql = cur.mogrify(f"SELECT * FROM actor ORDER BY name ")
     else:
-        print("DEBUG GET ACTORS SQL:",searchvalue)
+        #print("DEBUG GET ACTORS SQL:",searchvalue)
         searchvalue = searchvalue.replace("*","%")
         sql = cur.mogrify(f"SELECT * FROM actor WHERE actor.name ILIKE %s",(searchvalue,))
 
@@ -241,7 +241,7 @@ def get_actors(session,request):
 
 
 def dosomething():
-    print("in the dbproc.py program")
+    #print("in the dbproc.py program")
     conn = get_connection()
     conn.close()
     return {

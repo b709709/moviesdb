@@ -23,7 +23,7 @@ def addActor(session,request):
     newid = 0
     thisrow = None
 
-    print("DEBUG IN THE addActor FUNCTION:",sactorname,ibirthyear)
+    #print("DEBUG IN THE addActor FUNCTION:",sactorname,ibirthyear)
 
     #VERIFY DATA
     if sactorname == "" or not ibirthyear:
@@ -85,7 +85,7 @@ def addActor(session,request):
                 }    
 
 def editActor(session,request):
-    print("DEBUG: INSIDE THE API.ACTOR.EDITACTOR ROUTINE")
+    #print("DEBUG: INSIDE THE API.ACTOR.EDITACTOR ROUTINE")
 
     data = request.json
     smsg = ""
@@ -100,7 +100,7 @@ def editActor(session,request):
 
     sql = cur.mogrify(f"UPDATE actor set name='{sname}', birthyear={iyear} WHERE id={id}")
 
-    print("DEBUG SQL QUERY TO SAVE ACTOR EDIT:",sql)
+    #print("DEBUG SQL QUERY TO SAVE ACTOR EDIT:",sql)
     try:
        cur.execute(sql)
        conn.commit()
@@ -125,7 +125,7 @@ def editActor(session,request):
     }
 
 def deleteActor(session,request):
-    print("DEBUG: INSIDE THE API.ACTOR.DELETEACTOR ROUTINE")
+    #print("DEBUG: INSIDE THE API.ACTOR.DELETEACTOR ROUTINE")
 
     data = request.json
     smsg = "" #return message
