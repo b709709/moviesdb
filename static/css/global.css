@@ -184,7 +184,7 @@ div.movie-year, div.actions {
     z-index: 10;             /* ensures it appears above other content */
 }
 
-.posterthumb:hover {
+.xposterthumb:hover {
     
     transform: scale(4) translateX(10px);     /* enlarge the image */
     z-index: 999;            /* bring it to the front */
